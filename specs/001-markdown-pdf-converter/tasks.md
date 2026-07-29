@@ -49,15 +49,15 @@
 
 ### Implementation
 
-- [ ] T012 Create `src/mdpdf/parser/markdown.py` implementing MarkdownParser class: parse raw Markdown string into token stream using markdown-it-py with GFM tables plugin and heading anchors. Return ParsedDocument with tokens, headings list, and frontmatter metadata
-- [ ] T013 [P] Create `src/mdpdf/renderer/highlight.py` implementing SyntaxHighlighter class: use Pygments to highlight code blocks, support language detection from fence info string, fallback to plain text for unknown languages
-- [ ] T014 Create `src/mdpdf/renderer/html.py` implementing HTMLRenderer class: render ParsedDocument to full HTML5 document with embedded CSS. Generate TOC from headings (configurable level), inject base styles + theme CSS + syntax highlighting CSS
-- [ ] T015 Create `src/mdpdf/pdf/styles.py`: load built-in CSS themes from `src/mdpdf/themes/`, combine base layout CSS + theme CSS + custom CSS. Implement get_full_css(theme, custom_css) function
-- [ ] T016 [P] Create CSS theme files: `src/mdpdf/themes/default.css`, `src/mdpdf/themes/monokai.css`, `src/mdpdf/themes/github.css`, `src/mdpdf/themes/solarized-dark.css`, `src/mdpdf/themes/solarized-light.css`. Each includes page layout (@page margins, size), typography, heading styles, list styles, link styles, blockquote styles, and code block base styles
-- [ ] T017 Create `src/mdpdf/pdf/engine.py` implementing PDFEngine class: wrap WeasyPrint to convert HTML+CSS to PDF. Set base_url to source file directory for relative resources. Implement generate(html, output_path) and generate_bytes(html). Handle WeasyPrint warnings via logging
-- [ ] T018 Create `src/mdpdf/converter.py` implementing the pipeline orchestrator: load file → parse → preprocess (skip for now) → render HTML → generate PDF. Wire together Parser, Renderer, PDFEngine. Accept ConversionConfig. Return ConversionResult
-- [ ] T019 Create `src/mdpdf/cli.py` implementing Typer CLI with commands: `convert` (single file, options: --output, --style, --toc/--no-toc, --toc-level, --verbose, --quiet, --config), `list-styles`, `init` (create .mdpdf.yaml template), `version`. Add Rich progress spinner for conversion
-- [ ] T020 Verify end-to-end: install package in dev mode, run `mdpdf convert tests/fixtures/basic.md`, validate PDF is generated with correct content
+- [x] T012 Create `src/mdpdf/parser/markdown.py` implementing MarkdownParser class: parse raw Markdown string into token stream using markdown-it-py with GFM tables plugin and heading anchors. Return ParsedDocument with tokens, headings list, and frontmatter metadata
+- [x] T013 [P] Create `src/mdpdf/renderer/highlight.py` implementing SyntaxHighlighter class: use Pygments to highlight code blocks, support language detection from fence info string, fallback to plain text for unknown languages
+- [x] T014 Create `src/mdpdf/renderer/html.py` implementing HTMLRenderer class: render ParsedDocument to full HTML5 document with embedded CSS. Generate TOC from headings (configurable level), inject base styles + theme CSS + syntax highlighting CSS
+- [x] T015 Create `src/mdpdf/pdf/styles.py`: load built-in CSS themes from `src/mdpdf/themes/`, combine base layout CSS + theme CSS + custom CSS. Implement get_full_css(theme, custom_css) function
+- [x] T016 [P] Create CSS theme files: `src/mdpdf/themes/default.css`, `src/mdpdf/themes/monokai.css`, `src/mdpdf/themes/github.css`, `src/mdpdf/themes/solarized-dark.css`, `src/mdpdf/themes/solarized-light.css`. Each includes page layout (@page margins, size), typography, heading styles, list styles, link styles, blockquote styles, and code block base styles
+- [x] T017 Create `src/mdpdf/pdf/engine.py` implementing PDFEngine class: wrap WeasyPrint to convert HTML+CSS to PDF. Set base_url to source file directory for relative resources. Implement generate(html, output_path) and generate_bytes(html). Handle WeasyPrint warnings via logging
+- [x] T018 Create `src/mdpdf/converter.py` implementing the pipeline orchestrator: load file → parse → preprocess (skip for now) → render HTML → generate PDF. Wire together Parser, Renderer, PDFEngine. Accept ConversionConfig. Return ConversionResult
+- [x] T019 Create `src/mdpdf/cli.py` implementing Typer CLI with commands: `convert` (single file, options: --output, --style, --toc/--no-toc, --toc-level, --verbose, --quiet, --config), `list-styles`, `init` (create .mdpdf.yaml template), `version`. Add Rich progress spinner for conversion
+- [x] T020 Verify end-to-end: install package in dev mode, run `mdpdf convert tests/fixtures/basic.md`, validate PDF is generated with correct content
 
 **Checkpoint**: Basic Markdown → PDF conversion works. User Story 1 complete.
 

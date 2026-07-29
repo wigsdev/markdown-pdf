@@ -1,0 +1,11 @@
+/* Theme: Solarized Light */
+
+pre {
+    background-color: #fdf6e3;
+    color: #657b83;
+    border: 1px solid #eee8d5;
+}
+
+pre > code {
+    color: #657b83;
+}

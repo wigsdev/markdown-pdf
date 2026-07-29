@@ -1,0 +1,11 @@
+/* Theme: Solarized Dark */
+
+pre {
+    background-color: #002b36;
+    color: #839496;
+    border: none;
+}
+
+pre > code {
+    color: #839496;
+}
