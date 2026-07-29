@@ -18,11 +18,11 @@
 
 - [x] T001 Create `pyproject.toml` with project metadata, dependencies (weasyprint, markdown-it-py, pygments, typer, rich, pyyaml, fastapi, uvicorn), dev dependencies (pytest, pytest-cov, pytest-asyncio, ruff, mypy), and tool configuration (ruff, mypy, pytest, coverage)
 - [x] T002 Create project directory structure: `src/mdpdf/`, `src/mdpdf/parser/`, `src/mdpdf/preprocessor/`, `src/mdpdf/renderer/`, `src/mdpdf/pdf/`, `src/mdpdf/themes/`, `src/web/backend/`, `src/web/frontend/`, `tests/unit/`, `tests/integration/`, `tests/fixtures/`
-- [ ] T003 [P] Create `src/mdpdf/__init__.py` with version, author, and public eports
-- [ ] T004 [P] Create `src/mdpdf/__main__.py` with `python -m mdpdf` entry point
-- [ ] T005 [P] Create `src/mdpdf/exceptions.py` with exception hierarchy: MdpdfError (base), ParserError, PreprocessorError, RendererError, PDFGenerationError, ConfigError, InputFileError, OutputError
-- [ ] T006 [P] Create `.gitignore` with Python, venv, IDE, build artifacts, and `_backup/` exclusions
-- [ ] T007 [P] Create test fixtures: `tests/fixtures/basic.md`, `tests/fixtures/tables_wide.md`, `tests/fixtures/code_blocks.md`, `tests/fixtures/mermaid_diagrams.md`, `tests/fixtures/complex_mixed.md`
+- [x] T003 [P] Create `src/mdpdf/__init__.py` with version, author, and public eports
+- [x] T004 [P] Create `src/mdpdf/__main__.py` with `python -m mdpdf` entry point
+- [x] T005 [P] Create `src/mdpdf/exceptions.py` with exception hierarchy: MdpdfError (base), ParserError, PreprocessorError, RendererError, PDFGenerationError, ConfigError, InputFileError, OutputError
+- [x] T006 [P] Create `.gitignore` with Python, venv, IDE, build artifacts, and `_backup/` exclusions
+- [x] T007 [P] Create test fixtures: `tests/fixtures/basic.md`, `tests/fixtures/tables_wide.md`, `tests/fixtures/code_blocks.md`, `tests/fixtures/mermaid_diagrams.md`, `tests/fixtures/complex_mixed.md`
 
 **Checkpoint**: Project structure ready, `pip install -e .` works
 
