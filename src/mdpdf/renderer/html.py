@@ -84,11 +84,64 @@ class HTMLRenderer:
         env: dict = {}  # type: ignore[type-arg]
         html = md.renderer.render(document.tokens, md.options, env)  # type: ignore[arg-type]
 
+        # Apply syntax highlighting to fenced code blocks
+        html = self._apply_syntax_highlighting(html, document.tokens)
+
         # Wrap tables with strategy classes based on preprocessing
         if document.table_analyses:
             html = self._apply_table_strategies(html, document)
 
         return html
+
+    def _apply_syntax_highlighting(
+        self, html: str, tokens: list  # type: ignore[type-arg]
+    ) -> str:
+        """Replace raw code blocks with Pygments-highlighted versions.
+
+        Args:
+            html: Rendered HTML string.
+            tokens: Original token list with language info.
+
+        Returns:
+            HTML with highlighted code blocks.
+        """
+        import html as html_module
+        import re
+
+        # Extract language info from tokens for each fenced code block
+        languages: list[str | None] = []
+        for token in tokens:
+            if token.type == "fence":
+                lang = token.info.strip().split()[0] if token.info.strip() else None
+                languages.append(lang)
+
+        # Find and replace <pre><code> blocks
+        code_pattern = re.compile(
+            r'<pre><code(?:\s+class="language-([^"]+)")?>(.*?)</code></pre>',
+            re.DOTALL,
+        )
+
+        lang_index = 0
+
+        def replace_code_block(match: re.Match) -> str:  # type: ignore[type-arg]
+            nonlocal lang_index
+            lang_from_class = match.group(1)
+            raw_code = match.group(2)
+
+            # Determine language
+            lang = lang_from_class
+            if not lang and lang_index < len(languages):
+                lang = languages[lang_index]
+
+            lang_index += 1
+
+            # Unescape HTML entities in code content
+            code = html_module.unescape(raw_code)
+
+            # Apply highlighting
+            return self._highlighter.highlight_code(code, lang)
+
+        return code_pattern.sub(replace_code_block, html)
 
     def _apply_table_strategies(
         self, html: str, document: ProcessedDocument

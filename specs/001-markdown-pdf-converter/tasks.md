@@ -90,10 +90,10 @@
 
 ### Implementation
 
-- [ ] T027 Update `src/mdpdf/renderer/html.py` to use SyntaxHighlighter for all fenced code blocks. Detect language from info string, apply Pygments highlighting, wrap in `<pre><code class="highlight">` with language class
-- [ ] T028 Update CSS themes with code block rules: `pre { page-break-inside: avoid; break-inside: avoid; white-space: pre-wrap; word-wrap: break-word; }`, background colors per theme, font-family monospace, padding, border-radius
-- [ ] T029 Add Pygments CSS generation per theme to `src/mdpdf/pdf/styles.py`: generate `.highlight .xx` classes from Pygments style matching the theme name
-- [ ] T030 Create `tests/fixtures/code_blocks.md` with blocks in Python, JavaScript, SQL, YAML, Bash, and a block with 120+ character lines to test word-wrap
+- [x] T027 Update `src/mdpdf/renderer/html.py` to use SyntaxHighlighter for all fenced code blocks. Detect language from info string, apply Pygments highlighting, wrap in `<pre><code class="highlight">` with language class
+- [x] T028 Update CSS themes with code block rules: `pre { page-break-inside: avoid; break-inside: avoid; white-space: pre-wrap; word-wrap: break-word; }`, background colors per theme, font-family monospace, padding, border-radius
+- [x] T029 Add Pygments CSS generation per theme to `src/mdpdf/pdf/styles.py`: generate `.highlight .xx` classes from Pygments style matching the theme name
+- [x] T030 Create `tests/fixtures/code_blocks.md` with blocks in Python, JavaScript, SQL, YAML, Bash, and a block with 120+ character lines to test word-wrap
 
 **Checkpoint**: Code blocks render with syntax colors, wrap correctly, never split. User Story 3 complete.
 
