@@ -184,18 +184,18 @@
 
 **Purpose**: Testing, documentation, code quality
 
-- [ ] T051 [P] Create `tests/unit/test_config.py`: test YAML loading, env var override, precedence, invalid config handling
-- [ ] T052 [P] Create `tests/unit/test_parser.py`: test basic parsing, GFM tables, code blocks, headings extraction
-- [ ] T053 [P] Create `tests/unit/test_preprocessor_tables.py`: test table analysis, strategy selection for narrow/wide/extreme tables
-- [ ] T054 [P] Create `tests/unit/test_preprocessor_mermaid.py`: test successful rendering, invalid syntax handling, SVG extraction
-- [ ] T055 [P] Create `tests/unit/test_renderer.py`: test HTML generation, TOC generation, table wrappers, code highlighting
-- [ ] T056 [P] Create `tests/unit/test_pdf_engine.py`: test PDF generation, page count, file creation
-- [ ] T057 Create `tests/integration/test_conversion.py`: end-to-end test converting each fixture file, verify PDF exists and has expected properties
-- [ ] T058 [P] Create `tests/integration/test_cli.py`: test CLI commands (convert, batch, list-styles, init) via typer.testing.CliRunner
-- [ ] T059 [P] Create `tests/integration/test_web_api.py`: test API endpoints via httpx AsyncClient
-- [ ] T060 [P] Create `README.md` with project description, installation, usage (CLI + web), configuration, development guide
-- [ ] T061 Run full quality pipeline: `ruff check src/ tests/`, `mypy src/`, `pytest --cov`, verify coverage >= 80%
-- [ ] T062 Run quickstart.md validation: follow the quickstart guide from scratch and verify all commands work
+- [x] T051 [P] Create `tests/unit/test_config.py`: test YAML loading, env var override, precedence, invalid config handling
+- [x] T052 [P] Create `tests/unit/test_parser.py`: test basic parsing, GFM tables, code blocks, headings extraction
+- [x] T053 [P] Create `tests/unit/test_preprocessor_tables.py`: test table analysis, strategy selection for narrow/wide/extreme tables
+- [x] T054 [P] Create `tests/unit/test_preprocessor_mermaid.py`: test successful rendering, invalid syntax handling, SVG extraction
+- [x] T055 [P] Create `tests/unit/test_renderer.py`: test HTML generation, TOC generation, table wrappers, code highlighting
+- [x] T056 [P] Create `tests/unit/test_pdf_engine.py`: test PDF generation, page count, file creation
+- [x] T057 Create `tests/integration/test_conversion.py`: end-to-end test converting each fixture file, verify PDF exists and has expected properties
+- [x] T058 [P] Create `tests/integration/test_cli.py`: test CLI commands (convert, batch, list-styles, init) via typer.testing.CliRunner
+- [x] T059 [P] Create `tests/integration/test_web_api.py`: test API endpoints via httpx AsyncClient
+- [x] T060 [P] Create `README.md` with project description, installation, usage (CLI + web), configuration, development guide
+- [x] T061 Run full quality pipeline: `ruff check src/ tests/`, `mypy src/`, `pytest --cov`, verify coverage >= 80%
+- [x] T062 Run quickstart.md validation: follow the quickstart guide from scratch and verify all commands work
 
 **Checkpoint**: All tests pass, coverage >= 80%, linting clean, documentation complete.
 
