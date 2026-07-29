@@ -117,7 +117,10 @@ dropzone.addEventListener("drop", (e) => {
     if (e.dataTransfer.files.length > 0) selectFile(e.dataTransfer.files[0]);
 });
 
-removeFileBtn.addEventListener("click", reset);
+removeFileBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    reset();
+});
 convertAnotherBtn.addEventListener("click", reset);
 retryBtn.addEventListener("click", () => { hideAll(); });
 
