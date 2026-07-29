@@ -11,6 +11,7 @@ from mdpdf.models import ConversionResult, ProcessedDocument
 from mdpdf.parser.markdown import MarkdownParser
 from mdpdf.pdf.engine import PDFEngine
 from mdpdf.pdf.styles import get_full_css
+from mdpdf.preprocessor.images import ImagePreprocessor
 from mdpdf.preprocessor.mermaid import MermaidPreprocessor
 from mdpdf.preprocessor.tables import TablePreprocessor
 from mdpdf.renderer.html import HTMLRenderer
@@ -44,6 +45,7 @@ class Converter:
         self._parser = MarkdownParser()
         self._table_preprocessor = TablePreprocessor()
         self._mermaid_preprocessor = MermaidPreprocessor()
+        self._image_preprocessor = ImagePreprocessor()
         self._renderer = HTMLRenderer(self.config.style)
         self._pdf_engine = PDFEngine()
 
@@ -104,6 +106,9 @@ class Converter:
         # Stage 2: Preprocess (analyze tables for responsive strategies)
         table_analyses = self._table_preprocessor.process(parsed.tokens)
         mermaid_results = self._mermaid_preprocessor.process(parsed.tokens)
+        image_warnings = self._image_preprocessor.process(
+            parsed.tokens, source_path=input_file
+        )
         processed = ProcessedDocument(
             tokens=parsed.tokens,
             headings=parsed.headings,
@@ -122,6 +127,10 @@ class Converter:
 
         # Stage 4: Generate PDF
         result = self._pdf_engine.generate(html_doc, out_file)
+
+        # Add image warnings to result
+        if image_warnings:
+            result.warnings.extend(image_warnings)
 
         logger.info("Success: %s (%d pages)", out_file, result.pages)
         return result

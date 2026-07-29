@@ -172,9 +172,9 @@
 
 **Purpose**: Resolve relative image paths for correct rendering in PDF
 
-- [ ] T048 Create `src/mdpdf/preprocessor/images.py` implementing ImagePreprocessor: detect image references in tokens, resolve relative paths to absolute (based on source .md file location), validate that referenced files exist (warn if not)
-- [ ] T049 Update `src/mdpdf/converter.py` to include ImagePreprocessor in pipeline
-- [ ] T050 Set WeasyPrint base_url to source file directory in pdf/engine.py for correct relative resource resolution
+- [x] T048 Create `src/mdpdf/preprocessor/images.py` implementing ImagePreprocessor: detect image references in tokens, resolve relative paths to absolute (based on source .md file location), validate that referenced files exist (warn if not)
+- [x] T049 Update `src/mdpdf/converter.py` to include ImagePreprocessor in pipeline
+- [x] T050 Set WeasyPrint base_url to source file directory in pdf/engine.py for correct relative resource resolution
 
 **Checkpoint**: Images with relative paths render correctly in PDF.
 
