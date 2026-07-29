@@ -87,6 +87,10 @@ class HTMLRenderer:
         # Apply syntax highlighting to fenced code blocks
         html = self._apply_syntax_highlighting(html, document.tokens)
 
+        # Replace Mermaid blocks with rendered diagrams
+        if document.mermaid_results:
+            html = self._apply_mermaid_diagrams(html, document)
+
         # Wrap tables with strategy classes based on preprocessing
         if document.table_analyses:
             html = self._apply_table_strategies(html, document)
@@ -142,6 +146,70 @@ class HTMLRenderer:
             return self._highlighter.highlight_code(code, lang)
 
         return code_pattern.sub(replace_code_block, html)
+
+    def _apply_mermaid_diagrams(
+        self, html: str, document: ProcessedDocument
+    ) -> str:
+        """Replace Mermaid code blocks with rendered SVG or error display.
+
+        Args:
+            html: Rendered HTML string.
+            document: ProcessedDocument with mermaid_results.
+
+        Returns:
+            HTML with Mermaid blocks replaced by diagrams or error boxes.
+        """
+        import re
+
+        from mdpdf.preprocessor.mermaid import svg_to_data_uri
+
+        # Mermaid blocks are rendered as <pre><code class="language-mermaid">
+        # or may already be highlighted — find them
+        mermaid_pattern = re.compile(
+            r'<pre><code\s+class="language-mermaid">(.*?)</code></pre>',
+            re.DOTALL,
+        )
+
+        # Also match if Pygments processed it (would be in a .highlight div)
+        highlight_mermaid_pattern = re.compile(
+            r'<div class="highlight">.*?</div>',
+            re.DOTALL,
+        )
+
+        result_index = 0
+
+        def replace_mermaid(match: re.Match) -> str:  # type: ignore[type-arg]
+            nonlocal result_index
+            if result_index >= len(document.mermaid_results):
+                return match.group(0)
+
+            mermaid_result = document.mermaid_results[result_index]
+            result_index += 1
+
+            if mermaid_result.success and mermaid_result.svg_content:
+                data_uri = svg_to_data_uri(mermaid_result.svg_content)
+                return (
+                    '<div class="mermaid-diagram">'
+                    f'<img src="{data_uri}" alt="Mermaid diagram">'
+                    "</div>"
+                )
+            else:
+                error_msg = mermaid_result.error_message or "Unknown error"
+                import html as html_module
+
+                escaped_source = html_module.escape(mermaid_result.source_code)
+                escaped_error = html_module.escape(error_msg)
+                return (
+                    '<div class="mermaid-error">'
+                    '<div class="error-label">'
+                    f"\u26a0 Diagram rendering failed: {escaped_error}"
+                    "</div>"
+                    f"<pre><code>{escaped_source}</code></pre>"
+                    "</div>"
+                )
+
+        html = mermaid_pattern.sub(replace_mermaid, html)
+        return html
 
     def _apply_table_strategies(
         self, html: str, document: ProcessedDocument

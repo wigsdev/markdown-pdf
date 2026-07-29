@@ -11,6 +11,7 @@ from mdpdf.models import ConversionResult, ProcessedDocument
 from mdpdf.parser.markdown import MarkdownParser
 from mdpdf.pdf.engine import PDFEngine
 from mdpdf.pdf.styles import get_full_css
+from mdpdf.preprocessor.mermaid import MermaidPreprocessor
 from mdpdf.preprocessor.tables import TablePreprocessor
 from mdpdf.renderer.html import HTMLRenderer
 from mdpdf.utils import (
@@ -42,6 +43,7 @@ class Converter:
         self.config = config or ConversionConfig()
         self._parser = MarkdownParser()
         self._table_preprocessor = TablePreprocessor()
+        self._mermaid_preprocessor = MermaidPreprocessor()
         self._renderer = HTMLRenderer(self.config.style)
         self._pdf_engine = PDFEngine()
 
@@ -101,12 +103,14 @@ class Converter:
 
         # Stage 2: Preprocess (analyze tables for responsive strategies)
         table_analyses = self._table_preprocessor.process(parsed.tokens)
+        mermaid_results = self._mermaid_preprocessor.process(parsed.tokens)
         processed = ProcessedDocument(
             tokens=parsed.tokens,
             headings=parsed.headings,
             frontmatter=parsed.frontmatter,
             source_path=parsed.source_path,
             table_analyses=table_analyses,
+            mermaid_results=mermaid_results,
         )
 
         # Stage 3: Render HTML

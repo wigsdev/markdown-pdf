@@ -107,11 +107,11 @@
 
 ### Implementation
 
-- [ ] T031 Create `src/mdpdf/preprocessor/mermaid.py` implementing MermaidPreprocessor class: detect ```mermaid blocks in token stream, extract content to temp .mmd file, call `mmdc -i input.mmd -o output.svg -t neutral --backgroundColor transparent` via subprocess, read resulting SVG, return MermaidResult (success with SVG or failure with error message)
-- [ ] T032 Update `src/mdpdf/renderer/html.py` to replace Mermaid blocks: successful renders get `<div class="mermaid-diagram"><img src="data:image/svg+xml;base64,..."></div>`, failed renders get `<div class="mermaid-error"><pre><code>` + original source + error message
-- [ ] T033 Update CSS themes with Mermaid rules: `.mermaid-diagram { page-break-inside: avoid; text-align: center; max-width: 100%; }`, `.mermaid-diagram img { max-width: 100%; height: auto; }`, `.mermaid-error { border: 1px solid #e74c3c; padding: 1em; }`
-- [ ] T034 Update `src/mdpdf/converter.py` to include MermaidPreprocessor in the pipeline
-- [ ] T035 Create `tests/fixtures/mermaid_diagrams.md` with valid flowchart, sequence diagram, class diagram, and one intentionally invalid diagram to test error handling
+- [x] T031 Create `src/mdpdf/preprocessor/mermaid.py` implementing MermaidPreprocessor class: detect ```mermaid blocks in token stream, extract content to temp .mmd file, call `mmdc -i input.mmd -o output.svg -t neutral --backgroundColor transparent` via subprocess, read resulting SVG, return MermaidResult (success with SVG or failure with error message)
+- [x] T032 Update `src/mdpdf/renderer/html.py` to replace Mermaid blocks: successful renders get `<div class="mermaid-diagram"><img src="data:image/svg+xml;base64,..."></div>`, failed renders get `<div class="mermaid-error"><pre><code>` + original source + error message
+- [x] T033 Update CSS themes with Mermaid rules: `.mermaid-diagram { page-break-inside: avoid; text-align: center; max-width: 100%; }`, `.mermaid-diagram img { max-width: 100%; height: auto; }`, `.mermaid-error { border: 1px solid #e74c3c; padding: 1em; }`
+- [x] T034 Update `src/mdpdf/converter.py` to include MermaidPreprocessor in the pipeline
+- [x] T035 Create `tests/fixtures/mermaid_diagrams.md` with valid flowchart, sequence diagram, class diagram, and one intentionally invalid diagram to test error handling
 
 **Checkpoint**: Mermaid diagrams render as graphics; invalid syntax shows error. User Story 4 complete.
 
