@@ -71,12 +71,12 @@
 
 ### Implementation
 
-- [ ] T021 Create `src/mdpdf/preprocessor/tables.py` implementing TablePreprocessor class: analyze each table in the token stream, calculate ColumnInfo (max_chars, header_chars per column), determine TableStrategy (NORMAL if fits in portrait at normal font, REDUCE_FONT if fits with 7pt, LANDSCAPE if needs rotation)
-- [ ] T022 Update `src/mdpdf/renderer/html.py` to wrap tables with strategy classes: normal tables get `<div class="table-responsive">`, reduced font tables get `<div class="table-reduce-font">`, landscape tables get `<div class="table-landscape">`
-- [ ] T023 Update CSS themes to include table-specific rules: `.table-responsive table { width: 100%; table-layout: auto; }`, `.table-reduce-font table { font-size: 7pt; }`, `.table-landscape { page: landscape-page; }`, `@page landscape-page { size: A4 landscape; }`
-- [ ] T024 Add page-break rules to CSS: `table { page-break-inside: avoid; break-inside: avoid; }` to prevent tables being cut between pages
-- [ ] T025 Update `src/mdpdf/converter.py` to include TablePreprocessor in the pipeline between parser and renderer
-- [ ] T026 Create `tests/fixtures/tables_wide.md` with tables of 3, 5, 8, and 10+ columns to test all strategies
+- [x] T021 Create `src/mdpdf/preprocessor/tables.py` implementing TablePreprocessor class: analyze each table in the token stream, calculate ColumnInfo (max_chars, header_chars per column), determine TableStrategy (NORMAL if fits in portrait at normal font, REDUCE_FONT if fits with 7pt, LANDSCAPE if needs rotation)
+- [x] T022 Update `src/mdpdf/renderer/html.py` to wrap tables with strategy classes: normal tables get `<div class="table-responsive">`, reduced font tables get `<div class="table-reduce-font">`, landscape tables get `<div class="table-landscape">`
+- [x] T023 Update CSS themes to include table-specific rules: `.table-responsive table { width: 100%; table-layout: auto; }`, `.table-reduce-font table { font-size: 7pt; }`, `.table-landscape { page: landscape-page; }`, `@page landscape-page { size: A4 landscape; }`
+- [x] T024 Add page-break rules to CSS: `table { page-break-inside: avoid; break-inside: avoid; }` to prevent tables being cut between pages
+- [x] T025 Update `src/mdpdf/converter.py` to include TablePreprocessor in the pipeline between parser and renderer
+- [x] T026 Create `tests/fixtures/tables_wide.md` with tables of 3, 5, 8, and 10+ columns to test all strategies
 
 **Checkpoint**: All tables render within margins. User Story 2 complete.
 

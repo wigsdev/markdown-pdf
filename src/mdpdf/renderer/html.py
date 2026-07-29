@@ -6,7 +6,12 @@ import logging
 from pathlib import Path
 
 from mdpdf.config import StyleConfig
-from mdpdf.models import HeadingInfo, HTMLDocument, ProcessedDocument
+from mdpdf.models import (
+    HeadingInfo,
+    HTMLDocument,
+    ProcessedDocument,
+    TableStrategy,
+)
 from mdpdf.renderer.highlight import SyntaxHighlighter
 
 logger = logging.getLogger(__name__)
@@ -78,7 +83,60 @@ class HTMLRenderer:
         # markdown-it-py tokens contain enough info to render
         env: dict = {}  # type: ignore[type-arg]
         html = md.renderer.render(document.tokens, md.options, env)  # type: ignore[arg-type]
+
+        # Wrap tables with strategy classes based on preprocessing
+        if document.table_analyses:
+            html = self._apply_table_strategies(html, document)
+
         return html
+
+    def _apply_table_strategies(
+        self, html: str, document: ProcessedDocument
+    ) -> str:
+        """Wrap tables with responsive strategy div wrappers.
+
+        Args:
+            html: Rendered HTML string containing tables.
+            document: ProcessedDocument with table_analyses.
+
+        Returns:
+            HTML with tables wrapped in strategy divs.
+        """
+        import re
+
+        table_pattern = re.compile(
+            r"(<table>.*?</table>)", re.DOTALL
+        )
+        tables = table_pattern.findall(html)
+
+        for i, table_html in enumerate(tables):
+            if i < len(document.table_analyses):
+                analysis = document.table_analyses[i]
+                wrapper_class = self._get_table_wrapper_class(analysis.strategy)
+                wrapped = (
+                    f'<div class="{wrapper_class}">\n'
+                    f"{table_html}\n"
+                    f"</div>"
+                )
+                html = html.replace(table_html, wrapped, 1)
+
+        return html
+
+    def _get_table_wrapper_class(self, strategy: TableStrategy) -> str:
+        """Get CSS class name for a table strategy.
+
+        Args:
+            strategy: The rendering strategy for the table.
+
+        Returns:
+            CSS class name string.
+        """
+        strategy_classes = {
+            TableStrategy.NORMAL: "table-responsive",
+            TableStrategy.REDUCE_FONT: "table-reduce-font",
+            TableStrategy.LANDSCAPE: "table-landscape table-reduce-font",
+        }
+        return strategy_classes.get(strategy, "table-responsive")
 
     def _generate_toc(
         self, headings: list[HeadingInfo], max_level: int
