@@ -39,12 +39,15 @@ Constitution → Spec → Plan → Tasks → Implement → Tests → Commit → 
 
 ### Commit Workflow
 
-1. Complete task(s) — implementation code only
-2. Run quality checks (if available): `ruff check src/`, `mypy src/`
-3. Run tests: `pytest`
-4. If tests PASS → stage relevant files → commit
-5. If tests FAIL → fix → repeat from step 2
-6. **Never commit broken code.** Every commit must leave the project functional.
+1. Complete all tasks in the current phase
+2. Mark tasks as `[x]` in tasks.md
+3. Verify build integrity: `python -c "import mdpdf"` (no import errors)
+4. Stage relevant files → commit with conventional message
+5. **Never commit code with syntax errors or broken imports.**
+
+> **Note**: Formal testing (pytest, coverage) is handled in Phase 11 as defined
+> by the spec-kit task plan. Do not block commits on tests during implementation
+> phases. The quality gate runs once all functionality is complete.
 
 ### Staging Rules
 
@@ -102,7 +105,10 @@ Each stage is a separate module with clear interfaces:
 - **Test fixtures**: `tests/fixtures/` contains representative Markdown files
 - **Unit tests**: `tests/unit/` — test individual modules in isolation
 - **Integration tests**: `tests/integration/` — test the full pipeline end-to-end
-- **Before each commit**: all tests must pass
+- **When to test**: Phase 11 (Polish & Quality) — all tests are written and validated
+  as a dedicated phase after implementation is complete
+- **Quality gate**: `ruff check`, `mypy`, `pytest --cov-fail-under=80` must all pass
+  before any release
 
 ## File Organization
 
