@@ -36,3 +36,4 @@ Thumbs.db
 _backup/
 *.pdf
 !tests/fixtures/*.pdf
+semantic-review/

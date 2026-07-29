@@ -234,3 +234,41 @@ Once US1 (basic conversion) is complete:
 5. Phase 7 (web interface)
 6. Phase 8 (batch)
 7. Phase 11 (polish + tests)
+
+---
+
+## Phase 12: Quality Audit Fixes + Deploy (v0.2.0)
+
+**Purpose**: Corregir bugs criticos identificados en la auditoria, completar features incompletas, y preparar despliegue.
+
+**Prerequisite**: Phase 11 complete (v0.1.0-alpha)
+
+### Critical Fixes
+
+- [ ] T063 Fix Mermaid ordering bug: procesar bloques mermaid en el token stream ANTES del render HTML. Mover la logica de reemplazo de `_apply_mermaid_diagrams` (regex post-HTML) a procesamiento a nivel de tokens en el renderer, inyectando HTML de SVG/error directamente durante el render
+- [ ] T064 Fix syntax highlighting: reemplazar regex post-HTML por rendering directo durante `_render_tokens`. Interceptar tokens tipo `fence` y aplicar Pygments inline durante la generacion HTML
+- [ ] T065 Mejorar table heuristic: ponderar estimacion por numero de columnas + largo promedio, no solo suma total de caracteres. Ajustar thresholds con tablas reales de 3, 5, 8, 10 columnas
+
+### Feature Completion
+
+- [ ] T066 Completar tema `default.css`: page layout, headings, body text, links, blockquotes, tables, code blocks, TOC — identidad visual profesional light
+- [ ] T067 [P] Completar tema `monokai.css`: variante dark con colores vibrantes, fondos oscuros para code, contraste legible
+- [ ] T068 [P] Completar tema `github.css`: estilo GitHub (light body, dark code blocks, tipografia system-ui)
+- [ ] T069 [P] Completar tema `solarized-dark.css`: paleta Solarized completa en variante oscura
+- [ ] T070 [P] Completar tema `solarized-light.css`: paleta Solarized completa en variante clara
+
+### Web Hardening
+
+- [ ] T071 Agregar upload size limit (10MB) en el endpoint /api/convert
+- [ ] T072 Configurar CORS restrictivo para produccion (env var ALLOWED_ORIGINS)
+- [ ] T073 Renombrar paquete `src/web/` a `src/mdpdf_web/` para evitar colision de nombres
+
+### Deployment
+
+- [ ] T074 Crear `Dockerfile` multi-stage: base con system deps (cairo, pango, mmdc), app con pip install
+- [ ] T075 Crear `docker-compose.yml` para desarrollo local
+- [ ] T076 Crear `.dockerignore` (excluir _backup, .venv, tests, .git, semantic-review)
+- [ ] T077 Documentar instrucciones de deploy en README.md (Docker, Railway, Render)
+- [ ] T078 Bump version a 0.2.0 en pyproject.toml y __init__.py, actualizar CHANGELOG.md
+
+**Checkpoint**: App desplegable en produccion. `docker build && docker run` funciona end-to-end. Version v0.2.0 released.

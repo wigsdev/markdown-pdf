@@ -5,12 +5,13 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
+import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
 
 from web.backend.main import app
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def client():
     """Create async test client."""
     transport = ASGITransport(app=app)
@@ -18,10 +19,10 @@ async def client():
         yield ac
 
 
+@pytest.mark.asyncio
 class TestHealthEndpoint:
     """Tests for GET /api/health."""
 
-    @pytest.mark.asyncio
     async def test_health_check(self, client: AsyncClient) -> None:
         response = await client.get("/api/health")
         assert response.status_code == 200
@@ -30,10 +31,10 @@ class TestHealthEndpoint:
         assert "version" in data
 
 
+@pytest.mark.asyncio
 class TestStylesEndpoint:
     """Tests for GET /api/styles."""
 
-    @pytest.mark.asyncio
     async def test_list_styles(self, client: AsyncClient) -> None:
         response = await client.get("/api/styles")
         assert response.status_code == 200
@@ -44,10 +45,10 @@ class TestStylesEndpoint:
         assert "monokai" in names
 
 
+@pytest.mark.asyncio
 class TestConvertEndpoint:
     """Tests for POST /api/convert."""
 
-    @pytest.mark.asyncio
     async def test_convert_file_upload(self, client: AsyncClient, basic_md: Path) -> None:
         with basic_md.open("rb") as f:
             response = await client.post(
@@ -59,7 +60,6 @@ class TestConvertEndpoint:
         assert response.headers["content-type"] == "application/pdf"
         assert len(response.content) > 0
 
-    @pytest.mark.asyncio
     async def test_convert_content_form(self, client: AsyncClient) -> None:
         response = await client.post(
             "/api/convert",
@@ -73,7 +73,6 @@ class TestConvertEndpoint:
         assert response.status_code == 200
         assert len(response.content) > 0
 
-    @pytest.mark.asyncio
     async def test_convert_empty_content(self, client: AsyncClient) -> None:
         response = await client.post(
             "/api/convert",
@@ -81,7 +80,6 @@ class TestConvertEndpoint:
         )
         assert response.status_code == 400
 
-    @pytest.mark.asyncio
     async def test_convert_no_input(self, client: AsyncClient) -> None:
         response = await client.post(
             "/api/convert",
