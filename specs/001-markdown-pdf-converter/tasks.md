@@ -145,8 +145,8 @@
 
 ### Implementation
 
-- [ ] T043 Add `batch` command to `src/mdpdf/cli.py`: accepts directory path, --output dir, --style, --recursive flag. Uses find_markdown_files() from utils, converts each with Rich progress bar showing per-file status
-- [ ] T044 Update `src/mdpdf/converter.py` with convert_batch() method: iterate files, convert each, collect results, continue on individual failures, return list of ConversionResult with successes and failures
+- [x] T043 Add `batch` command to `src/mdpdf/cli.py`: accepts directory path, --output dir, --style, --recursive flag. Uses find_markdown_files() from utils, converts each with Rich progress bar showing per-file status
+- [x] T044 Update `src/mdpdf/converter.py` with convert_batch() method: iterate files, convert each, collect results, continue on individual failures, return list of ConversionResult with successes and failures
 
 **Checkpoint**: Batch conversion works with progress reporting. User Story 6 complete.
 
