@@ -1,9 +1,9 @@
 # MDPDF - Markdown to PDF Converter
-# Multi-stage build: system deps → app install → runtime
+# Multi-stage build: system deps + app install
 
 FROM python:3.13-slim AS base
 
-# System dependencies for WeasyPrint + Mermaid
+# System dependencies for WeasyPrint
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libpango-1.0-0 \
     libpangoft2-1.0-0 \
@@ -25,21 +25,15 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
 RUN npm install -g @mermaid-js/mermaid-cli
 
 # ============================================================
-# Application stage
+# Application
 # ============================================================
-FROM base AS app
-
 WORKDIR /app
 
-# Copy project files
+# Copy and install package
 COPY pyproject.toml ./
 COPY src/ ./src/
 
-# Install the package
 RUN pip install --no-cache-dir ".[web]"
-
-# Copy frontend (served by FastAPI)
-COPY src/web/frontend/ ./src/web/frontend/
 
 # Environment
 ENV MDPDF_ALLOWED_ORIGINS="*"
@@ -51,5 +45,5 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s \
     CMD curl -f http://localhost:8000/api/health || exit 1
 
-# Run with uvicorn
-CMD ["uvicorn", "web.backend.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Run uvicorn pointing to the app source directly
+CMD ["uvicorn", "web.backend.main:app", "--host", "0.0.0.0", "--port", "8000", "--app-dir", "/app/src"]
