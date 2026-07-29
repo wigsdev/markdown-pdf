@@ -160,9 +160,9 @@
 
 ### Implementation
 
-- [ ] T045 Implement config file discovery in `src/mdpdf/config.py`: search CWD and up to 3 parent directories for .mdpdf.yaml / .mdpdf.yml / mdpdf.yaml. Parse with PyYAML safe_load. Merge with env vars and defaults
-- [ ] T046 Update `src/mdpdf/cli.py` convert command to load config file automatically (unless --config explicitly specified). Apply precedence: CLI flags > env vars > config file > defaults
-- [ ] T047 Implement `mdpdf init` command: generate .mdpdf.yaml template with commented-out options and documentation
+- [x] T045 Implement config file discovery in `src/mdpdf/config.py`: search CWD and up to 3 parent directories for .mdpdf.yaml / .mdpdf.yml / mdpdf.yaml. Parse with PyYAML safe_load. Merge with env vars and defaults
+- [x] T046 Update `src/mdpdf/cli.py` convert command to load config file automatically (unless --config explicitly specified). Apply precedence: CLI flags > env vars > config file > defaults
+- [x] T047 Implement `mdpdf init` command: generate .mdpdf.yaml template with commented-out options and documentation
 
 **Checkpoint**: Configuration file respected automatically. User Story 7 complete.
 
