@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MDPDF - Markdown to PDF</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="logo">
+                <h1>MDPDF</h1>
+            </div>
+            <p class="tagline">Markdown to PDF with professional quality</p>
+        </header>
+
+        <main class="main-content">
+            <!-- Upload Section -->
+            <section class="upload-section">
+                <div class="dropzone" id="dropzone">
+                    <div class="dropzone-content">
+                        <div class="dropzone-icon">&#128196;</div>
+                        <h2>Drop your Markdown file here</h2>
+                        <p>or click to select</p>
+                        <input type="file" id="fileInput" accept=".md,.markdown,.mdown,.mkd" hidden>
+                        <button class="btn btn-secondary" id="selectFileBtn">Select file</button>
+                    </div>
+                    <div class="dropzone-active">
+                        <div class="dropzone-icon">&#128229;</div>
+                        <h2>Drop it here</h2>
+                    </div>
+                </div>
+
+                <div class="file-info" id="fileInfo" hidden>
+                    <div class="file-details">
+                        <span class="file-name" id="fileName">document.md</span>
+                        <span class="file-size" id="fileSize">0 KB</span>
+                    </div>
+                    <button class="btn-icon" id="removeFileBtn" title="Remove file">&times;</button>
+                </div>
+            </section>
+
+            <!-- Options Section -->
+            <section class="options-section">
+                <h3>Options</h3>
+                <div class="options-grid">
+                    <div class="option-group">
+                        <label for="styleSelect">Theme</label>
+                        <select id="styleSelect">
+                            <option value="default">Default</option>
+                            <option value="monokai">Monokai</option>
+                            <option value="github">GitHub</option>
+                            <option value="solarized-dark">Solarized Dark</option>
+                            <option value="solarized-light">Solarized Light</option>
+                        </select>
+                    </div>
+                    <div class="option-group">
+                        <label for="tocToggle">Table of Contents</label>
+                        <label class="toggle">
+                            <input type="checkbox" id="tocToggle" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="option-group">
+                        <label for="tocLevel">TOC Level</label>
+                        <select id="tocLevel">
+                            <option value="2">H1 - H2</option>
+                            <option value="3" selected>H1 - H3</option>
+                            <option value="4">H1 - H4</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Convert Button -->
+            <section class="action-section">
+                <button class="btn btn-primary btn-large" id="convertBtn" disabled>
+                    Convert to PDF
+                </button>
+            </section>
+
+            <!-- Status -->
+            <section class="status-section" id="statusSection" hidden>
+                <div class="spinner"></div>
+                <p id="statusText">Converting...</p>
+            </section>
+
+            <!-- Success -->
+            <section class="success-section" id="successSection" hidden>
+                <h3>Conversion successful</h3>
+                <p id="successInfo"></p>
+                <a class="btn btn-primary" id="downloadBtn" href="#" download>Download PDF</a>
+                <button class="btn btn-secondary" id="convertAnotherBtn">Convert another</button>
+            </section>
+
+            <!-- Error -->
+            <section class="error-section" id="errorSection" hidden>
+                <h3>Conversion error</h3>
+                <p id="errorMessage"></p>
+                <button class="btn btn-secondary" id="retryBtn">Try again</button>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <p>MDPDF v0.1.0 | MIT License</p>
+        </footer>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

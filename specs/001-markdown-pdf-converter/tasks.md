@@ -125,13 +125,13 @@
 
 ### Implementation
 
-- [ ] T036 Create `src/web/backend/main.py` implementing FastAPI app: POST /api/convert (file upload + options → PDF bytes), GET /api/styles (available themes), GET /api/health. Use mdpdf core library for conversion. CORS middleware for development
-- [ ] T037 [P] Create `src/web/backend/schemas.py` with Pydantic models: ConvertRequest, StyleInfo, HealthResponse
-- [ ] T038 Create `src/web/frontend/index.html` with: drag-and-drop zone, file selector button, theme dropdown, TOC toggle, convert button, progress indicator, download area, error display
-- [ ] T039 [P] Create `src/web/frontend/css/styles.css` with modern UI: dark header, card layout, dropzone animations, button styles, responsive design
-- [ ] T040 Create `src/web/frontend/js/app.js` with: file handling (drag-drop + click), FormData submission to /api/convert, blob download of PDF response, UI state management (idle/loading/success/error)
-- [ ] T041 Add `serve` command to `src/mdpdf/cli.py`: starts uvicorn with the FastAPI app on configurable port (default 8000)
-- [ ] T042 Configure FastAPI to serve frontend static files and index.html at root
+- [x] T036 Create `src/web/backend/main.py` implementing FastAPI app: POST /api/convert (file upload + options → PDF bytes), GET /api/styles (available themes), GET /api/health. Use mdpdf core library for conversion. CORS middleware for development
+- [x] T037 [P] Create `src/web/backend/schemas.py` with Pydantic models: ConvertRequest, StyleInfo, HealthResponse
+- [x] T038 Create `src/web/frontend/index.html` with: drag-and-drop zone, file selector button, theme dropdown, TOC toggle, convert button, progress indicator, download area, error display
+- [x] T039 [P] Create `src/web/frontend/css/styles.css` with modern UI: dark header, card layout, dropzone animations, button styles, responsive design
+- [x] T040 Create `src/web/frontend/js/app.js` with: file handling (drag-drop + click), FormData submission to /api/convert, blob download of PDF response, UI state management (idle/loading/success/error)
+- [x] T041 Add `serve` command to `src/mdpdf/cli.py`: starts uvicorn with the FastAPI app on configurable port (default 8000)
+- [x] T042 Configure FastAPI to serve frontend static files and index.html at root
 
 **Checkpoint**: Web interface functional. User Story 5 complete.
 
