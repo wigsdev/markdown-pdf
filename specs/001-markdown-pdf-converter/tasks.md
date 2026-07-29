@@ -32,10 +32,10 @@
 
 **Purpose**: Shared types, configuration system, and utilities that all modules depend on
 
-- [ ] T008 Create `src/mdpdf/config.py` with dataclasses: OutputConfig, StyleConfig, ConversionConfig. Support loading from YAML file (.mdpdf.yaml), environment variables (MDPDF_*), and defaults. Implement precedence: CLI > env > file > defaults
-- [ ] T009 [P] Create `src/mdpdf/models.py` with core data types: ParsedDocument, ProcessedDocument, HTMLDocument, ConversionResult, TableAnalysis, TableStrategy (enum), ColumnInfo, MermaidResult
-- [ ] T010 [P] Create `src/mdpdf/utils.py` with utility functions: validate_input_file, ensure_output_directory, generate_output_path, find_markdown_files, strip_bom, is_markdown_file, sanitize_filename
-- [ ] T011 Validate system dependencies at import: check WeasyPrint availability, check mmdc availability (with helpful error messages if missing)
+- [x] T008 Create `src/mdpdf/config.py` with dataclasses: OutputConfig, StyleConfig, ConversionConfig. Support loading from YAML file (.mdpdf.yaml), environment variables (MDPDF_*), and defaults. Implement precedence: CLI > env > file > defaults
+- [x] T009 [P] Create `src/mdpdf/models.py` with core data types: ParsedDocument, ProcessedDocument, HTMLDocument, ConversionResult, TableAnalysis, TableStrategy (enum), ColumnInfo, MermaidResult
+- [x] T010 [P] Create `src/mdpdf/utils.py` with utility functions: validate_input_file, ensure_output_directory, generate_output_path, find_markdown_files, strip_bom, is_markdown_file, sanitize_filename
+- [x] T011 Validate system dependencies at import: check WeasyPrint availability, check mmdc availability (with helpful error messages if missing)
 
 **Checkpoint**: Foundation ready — module implementation can begin
 
