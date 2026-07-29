@@ -9,17 +9,46 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ## [Unreleased]
 
-### Planned (v0.2.0)
+---
 
-Mejoras identificadas en la auditoria de calidad post-implementacion:
+## [0.2.0] - 2026-07-29
 
-- **Fix**: Mermaid ordering bug — procesar bloques mermaid en tokens antes del render HTML
-- **Fix**: Refactorizar rendering — mover syntax highlighting a nivel de tokens (no regex post-HTML)
-- **Feat**: Completar los 5 temas CSS con identidad visual completa
-- **Fix**: Mejorar table heuristic — estimacion ponderada por tipo de fuente y columnas
-- **Fix**: Hardening web — upload limit 10MB, CORS restrictivo, rename paquete web
-- **Feat**: Dockerfile + instrucciones de despliegue
-- **Docs**: Semantic version bump a v0.2.0
+Mejoras de calidad post-auditoria. Fixes criticos, temas completos, y soporte Docker.
+
+### Fixed
+
+- **Mermaid ordering bug**: refactorizado el renderer para procesar bloques mermaid
+  directamente durante el render de tokens (no post-regex). Los diagramas ahora se
+  renderizan correctamente como SVG antes que el syntax highlighter los consuma.
+- **Syntax highlighting fragil**: eliminado el approach de regex post-HTML. Ahora se
+  usa un custom fence renderer que aplica Pygments inline durante la generacion HTML.
+- **Table heuristic inexacta**: ponderacion mejorada con factor proporcional (0.7x) y
+  overhead por columna. Reduce falsos positivos en tablas medianas.
+
+### Changed
+
+- **5 temas CSS completos**: cada tema ahora tiene identidad visual completa (headings,
+  body, links, blockquotes, tables, code, TOC) en lugar de solo overrides de `<pre>`.
+- **CORS restrictivo**: ya no acepta `*` por defecto. Configurable via `MDPDF_ALLOWED_ORIGINS`.
+- **Upload limit**: maximo 10MB por defecto (configurable via `MDPDF_MAX_UPLOAD_MB`).
+
+### Added
+
+- `Dockerfile` multi-stage con todas las dependencias (WeasyPrint + Mermaid CLI)
+- `docker-compose.yml` para desarrollo local
+- `.dockerignore` para builds limpios
+- Healthcheck endpoint en el container
+
+### Deployment
+
+```bash
+# Build y run local
+docker compose up --build
+
+# O directamente
+docker build -t mdpdf .
+docker run -p 8000:8000 mdpdf
+```
 
 ---
 

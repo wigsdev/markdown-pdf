@@ -7,6 +7,7 @@ serving the web frontend, and listing available themes.
 from __future__ import annotations
 
 import logging
+import os
 import tempfile
 from pathlib import Path
 from typing import Annotated
@@ -25,6 +26,13 @@ from .schemas import HealthResponse, StyleInfo
 
 logger = logging.getLogger(__name__)
 
+# Configuration
+MAX_UPLOAD_SIZE_MB = int(os.environ.get("MDPDF_MAX_UPLOAD_MB", "10"))
+MAX_UPLOAD_SIZE_BYTES = MAX_UPLOAD_SIZE_MB * 1024 * 1024
+ALLOWED_ORIGINS = os.environ.get(
+    "MDPDF_ALLOWED_ORIGINS", "http://localhost:8000,http://127.0.0.1:8000"
+).split(",")
+
 app = FastAPI(
     title="MDPDF Web",
     description="Convert Markdown to styled PDF documents",
@@ -35,9 +43,9 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST"],
     allow_headers=["*"],
 )
 
@@ -89,12 +97,24 @@ async def convert_markdown(
     if file is not None:
         try:
             raw = await file.read()
+            if len(raw) > MAX_UPLOAD_SIZE_BYTES:
+                raise HTTPException(
+                    status_code=413,
+                    detail=f"File too large. Maximum size: {MAX_UPLOAD_SIZE_MB}MB",
+                )
             markdown_content = raw.decode("utf-8")
             markdown_content = markdown_content.replace("\r\n", "\n").replace("\r", "\n")
             filename = Path(file.filename or "document").stem
+        except HTTPException:
+            raise
         except Exception as e:
             raise HTTPException(status_code=400, detail=f"Error reading file: {e}") from e
     elif content is not None:
+        if len(content.encode("utf-8")) > MAX_UPLOAD_SIZE_BYTES:
+            raise HTTPException(
+                status_code=413,
+                detail=f"Content too large. Maximum size: {MAX_UPLOAD_SIZE_MB}MB",
+            )
         markdown_content = content.replace("\r\n", "\n").replace("\r", "\n")
         filename = "document"
     else:

@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
+import html as html_module
 import logging
-from pathlib import Path
+from typing import Any
 
 from mdpdf.config import StyleConfig
 from mdpdf.models import (
@@ -18,7 +19,12 @@ logger = logging.getLogger(__name__)
 
 
 class HTMLRenderer:
-    """Render ProcessedDocument to styled HTML."""
+    """Render ProcessedDocument to styled HTML.
+
+    Uses a token-level rendering approach: fence tokens (code blocks and
+    mermaid diagrams) are rendered directly during token traversal, avoiding
+    fragile regex-based post-processing.
+    """
 
     def __init__(self, style_config: StyleConfig) -> None:
         """Initialize renderer with style configuration.
@@ -39,7 +45,6 @@ class HTMLRenderer:
         Returns:
             HTMLDocument ready for PDF generation.
         """
-        # Render markdown tokens to HTML body
         body_html = self._render_tokens(document)
 
         # Generate TOC if enabled
@@ -51,11 +56,8 @@ class HTMLRenderer:
 
         # Get syntax highlighting CSS
         highlight_css = self._highlighter.get_css()
-
-        # Combine all CSS
         full_css = f"{css}\n\n/* Syntax Highlighting */\n{highlight_css}"
 
-        # Build full HTML document
         title = self._extract_title(document.headings)
         html = self._build_html(title, full_css, toc_html, body_html)
 
@@ -71,145 +73,127 @@ class HTMLRenderer:
         )
 
     def _render_tokens(self, document: ProcessedDocument) -> str:
-        """Render token stream to HTML body content."""
+        """Render token stream to HTML with inline processing of fence blocks.
+
+        This method renders tokens to HTML while intercepting fence tokens
+        to apply syntax highlighting and mermaid rendering directly — no
+        post-render regex needed.
+
+        Args:
+            document: ProcessedDocument with preprocessing results.
+
+        Returns:
+            HTML body content string.
+        """
         from markdown_it import MarkdownIt
+        from markdown_it.renderer import RendererHTML
         from mdit_py_plugins.anchors import anchors_plugin
 
-        # Re-create renderer to get HTML from tokens
+        # Build a custom renderer that handles fence tokens inline
         md = MarkdownIt("gfm-like", {"typographer": False})
         anchors_plugin(md)
 
-        # We need to render from the original content via the tokens
-        # markdown-it-py tokens contain enough info to render
-        env: dict = {}  # type: ignore[type-arg]
+        # Track mermaid result index
+        mermaid_idx = [0]  # mutable container for closure access
+        mermaid_results = document.mermaid_results or []
+
+        # Override the fence renderer
+        def custom_fence_renderer(
+            tokens: list[Any],
+            idx: int,
+            options: dict[str, Any],
+            env: dict[str, Any],
+        ) -> str:
+            token = tokens[idx]
+            info = token.info.strip().split()[0] if token.info.strip() else ""
+            content = token.content
+
+            # Mermaid blocks → SVG or error
+            if info.lower() == "mermaid":
+                result_html = self._render_mermaid_block(
+                    content, mermaid_results, mermaid_idx[0]
+                )
+                mermaid_idx[0] += 1
+                return result_html
+
+            # Regular code blocks → Pygments highlighting
+            lang = info if info else None
+            return self._render_code_block(content, lang)
+
+        # Monkey-patch the fence rule
+        md.renderer.rules["fence"] = custom_fence_renderer  # type: ignore[assignment]
+
+        # Render all tokens
+        env: dict[str, Any] = {}
         html = md.renderer.render(document.tokens, md.options, env)  # type: ignore[arg-type]
 
-        # Apply syntax highlighting to fenced code blocks
-        html = self._apply_syntax_highlighting(html, document.tokens)
-
-        # Replace Mermaid blocks with rendered diagrams
-        if document.mermaid_results:
-            html = self._apply_mermaid_diagrams(html, document)
-
-        # Wrap tables with strategy classes based on preprocessing
+        # Wrap tables with strategy classes
         if document.table_analyses:
             html = self._apply_table_strategies(html, document)
 
         return html
 
-    def _apply_syntax_highlighting(
-        self, html: str, tokens: list  # type: ignore[type-arg]
-    ) -> str:
-        """Replace raw code blocks with Pygments-highlighted versions.
+    def _render_code_block(self, code: str, language: str | None) -> str:
+        """Render a fenced code block with Pygments highlighting.
 
         Args:
-            html: Rendered HTML string.
-            tokens: Original token list with language info.
+            code: Source code content.
+            language: Language identifier (optional).
 
         Returns:
-            HTML with highlighted code blocks.
+            HTML string with highlighted code.
         """
-        import html as html_module
-        import re
+        return self._highlighter.highlight_code(code, language)
 
-        # Extract language info from tokens for each fenced code block
-        languages: list[str | None] = []
-        for token in tokens:
-            if token.type == "fence":
-                lang = token.info.strip().split()[0] if token.info.strip() else None
-                languages.append(lang)
-
-        # Find and replace <pre><code> blocks
-        code_pattern = re.compile(
-            r'<pre><code(?:\s+class="language-([^"]+)")?>(.*?)</code></pre>',
-            re.DOTALL,
-        )
-
-        lang_index = 0
-
-        def replace_code_block(match: re.Match) -> str:  # type: ignore[type-arg]
-            nonlocal lang_index
-            lang_from_class = match.group(1)
-            raw_code = match.group(2)
-
-            # Determine language
-            lang = lang_from_class
-            if not lang and lang_index < len(languages):
-                lang = languages[lang_index]
-
-            lang_index += 1
-
-            # Unescape HTML entities in code content
-            code = html_module.unescape(raw_code)
-
-            # Apply highlighting
-            return self._highlighter.highlight_code(code, lang)
-
-        return code_pattern.sub(replace_code_block, html)
-
-    def _apply_mermaid_diagrams(
-        self, html: str, document: ProcessedDocument
+    def _render_mermaid_block(
+        self,
+        source_code: str,
+        mermaid_results: list[Any],
+        mermaid_index: int,
     ) -> str:
-        """Replace Mermaid code blocks with rendered SVG or error display.
+        """Render a Mermaid block as SVG diagram or error box.
 
         Args:
-            html: Rendered HTML string.
-            document: ProcessedDocument with mermaid_results.
+            source_code: Mermaid diagram source.
+            mermaid_results: List of MermaidResult from preprocessor.
+            mermaid_index: Current index into mermaid_results.
 
         Returns:
-            HTML with Mermaid blocks replaced by diagrams or error boxes.
+            HTML div with SVG image or error display.
         """
-        import re
-
         from mdpdf.preprocessor.mermaid import svg_to_data_uri
 
-        # Mermaid blocks are rendered as <pre><code class="language-mermaid">
-        # or may already be highlighted — find them
-        mermaid_pattern = re.compile(
-            r'<pre><code\s+class="language-mermaid">(.*?)</code></pre>',
-            re.DOTALL,
-        )
+        # Consume the next mermaid result
+        # We need to track index via mutable container since nonlocal
+        # won't work across the closure boundary reliably
+        if mermaid_index < len(mermaid_results):
+            result = mermaid_results[mermaid_index]
+            # Increment the counter in the parent scope
+            # (handled by the caller tracking the index)
+        else:
+            # No result available — render as code
+            escaped = html_module.escape(source_code)
+            return f'<pre><code class="language-mermaid">{escaped}</code></pre>'
 
-        # Also match if Pygments processed it (would be in a .highlight div)
-        highlight_mermaid_pattern = re.compile(
-            r'<div class="highlight">.*?</div>',
-            re.DOTALL,
-        )
-
-        result_index = 0
-
-        def replace_mermaid(match: re.Match) -> str:  # type: ignore[type-arg]
-            nonlocal result_index
-            if result_index >= len(document.mermaid_results):
-                return match.group(0)
-
-            mermaid_result = document.mermaid_results[result_index]
-            result_index += 1
-
-            if mermaid_result.success and mermaid_result.svg_content:
-                data_uri = svg_to_data_uri(mermaid_result.svg_content)
-                return (
-                    '<div class="mermaid-diagram">'
-                    f'<img src="{data_uri}" alt="Mermaid diagram">'
-                    "</div>"
-                )
-            else:
-                error_msg = mermaid_result.error_message or "Unknown error"
-                import html as html_module
-
-                escaped_source = html_module.escape(mermaid_result.source_code)
-                escaped_error = html_module.escape(error_msg)
-                return (
-                    '<div class="mermaid-error">'
-                    '<div class="error-label">'
-                    f"\u26a0 Diagram rendering failed: {escaped_error}"
-                    "</div>"
-                    f"<pre><code>{escaped_source}</code></pre>"
-                    "</div>"
-                )
-
-        html = mermaid_pattern.sub(replace_mermaid, html)
-        return html
+        if result.success and result.svg_content:
+            data_uri = svg_to_data_uri(result.svg_content)
+            return (
+                '<div class="mermaid-diagram">'
+                f'<img src="{data_uri}" alt="Mermaid diagram">'
+                "</div>"
+            )
+        else:
+            error_msg = result.error_message or "Unknown error"
+            escaped_source = html_module.escape(source_code)
+            escaped_error = html_module.escape(error_msg)
+            return (
+                '<div class="mermaid-error">'
+                '<div class="error-label">'
+                f"\u26a0 Diagram rendering failed: {escaped_error}"
+                "</div>"
+                f"<pre><code>{escaped_source}</code></pre>"
+                "</div>"
+            )
 
     def _apply_table_strategies(
         self, html: str, document: ProcessedDocument
@@ -225,9 +209,7 @@ class HTMLRenderer:
         """
         import re
 
-        table_pattern = re.compile(
-            r"(<table>.*?</table>)", re.DOTALL
-        )
+        table_pattern = re.compile(r"(<table>.*?</table>)", re.DOTALL)
         tables = table_pattern.findall(html)
 
         for i, table_html in enumerate(tables):
@@ -244,14 +226,7 @@ class HTMLRenderer:
         return html
 
     def _get_table_wrapper_class(self, strategy: TableStrategy) -> str:
-        """Get CSS class name for a table strategy.
-
-        Args:
-            strategy: The rendering strategy for the table.
-
-        Returns:
-            CSS class name string.
-        """
+        """Get CSS class name for a table strategy."""
         strategy_classes = {
             TableStrategy.NORMAL: "table-responsive",
             TableStrategy.REDUCE_FONT: "table-reduce-font",

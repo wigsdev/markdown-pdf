@@ -1,11 +1,63 @@
-/* Theme: Solarized Light */
+/* Theme: Solarized Light — Ethan Schoonover's palette (light variant) */
 
+/* Headings */
+h1 { color: #073642; }
+h2 { color: #268bd2; }
+h3 { color: #2aa198; }
+h4, h5, h6 { color: #859900; }
+h1 { border-bottom-color: #eee8d5; }
+h2 { border-bottom-color: #eee8d5; }
+
+/* Body */
+body { background-color: #fdf6e3; color: #657b83; }
+p { color: #657b83; }
+
+/* Links */
+a { color: #268bd2; }
+a:hover { color: #2aa198; }
+
+/* Code blocks */
 pre {
-    background-color: #fdf6e3;
-    color: #657b83;
-    border: 1px solid #eee8d5;
+    background-color: #eee8d5;
+    border: 1px solid #93a1a1;
 }
 
-pre > code {
-    color: #657b83;
+code {
+    background-color: #eee8d5;
+    color: #cb4b16;
 }
+
+pre > code { color: #657b83; }
+
+/* Tables */
+th {
+    background-color: #eee8d5;
+    color: #073642;
+    border-color: #93a1a1;
+}
+
+td {
+    color: #657b83;
+    border-color: #93a1a1;
+}
+
+tr:nth-child(even) { background-color: #eee8d5; }
+
+/* Blockquotes */
+blockquote {
+    border-left-color: #268bd2;
+    background-color: #eee8d5;
+    color: #586e75;
+}
+
+/* TOC */
+.toc {
+    background-color: #eee8d5;
+    border: 1px solid #93a1a1;
+}
+
+.toc a { color: #073642; }
+.toc a:hover { color: #268bd2; }
+
+/* Horizontal rule */
+hr { border-top-color: #93a1a1; }

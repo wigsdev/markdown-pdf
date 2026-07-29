@@ -1,6 +1,60 @@
 /* Theme: Default — Clean, professional, light */
 
+/* Headings */
+h1 { color: #1a1a2e; }
+h2 { color: #16213e; }
+h3, h4, h5, h6 { color: #1a1a2e; }
+h1 { border-bottom-color: #3a86ff; }
+h2 { border-bottom-color: #e2e8f0; }
+
+/* Body */
+body { color: #2d3748; }
+p { color: #2d3748; }
+
+/* Links */
+a { color: #3a86ff; }
+a:hover { color: #2563eb; }
+
+/* Code blocks */
 pre {
-    background-color: #f6f8fa;
-    border: 1px solid #e1e4e8;
+    background-color: #f7f8fa;
+    border: 1px solid #e2e8f0;
 }
+
+code {
+    background-color: #edf2f7;
+    color: #e53e3e;
+}
+
+pre > code {
+    color: inherit;
+}
+
+/* Tables */
+th {
+    background-color: #edf2f7;
+    color: #1a202c;
+    border-color: #cbd5e0;
+}
+
+td { border-color: #e2e8f0; }
+tr:nth-child(even) { background-color: #f7fafc; }
+
+/* Blockquotes */
+blockquote {
+    border-left-color: #3a86ff;
+    background-color: #f0f7ff;
+    color: #4a5568;
+}
+
+/* TOC */
+.toc {
+    background-color: #f7f8fa;
+    border: 1px solid #e2e8f0;
+}
+
+.toc a { color: #2d3748; }
+.toc a:hover { color: #3a86ff; }
+
+/* Horizontal rule */
+hr { border-top-color: #e2e8f0; }

@@ -1,11 +1,63 @@
-/* Theme: Solarized Dark */
+/* Theme: Solarized Dark — Ethan Schoonover's palette (dark variant) */
 
+/* Headings */
+h1 { color: #93a1a1; }
+h2 { color: #268bd2; }
+h3 { color: #2aa198; }
+h4, h5, h6 { color: #859900; }
+h1 { border-bottom-color: #073642; }
+h2 { border-bottom-color: #073642; }
+
+/* Body */
+body { background-color: #002b36; color: #839496; }
+p { color: #839496; }
+
+/* Links */
+a { color: #268bd2; }
+a:hover { color: #2aa198; }
+
+/* Code blocks */
 pre {
-    background-color: #002b36;
-    color: #839496;
-    border: none;
+    background-color: #073642;
+    border: 1px solid #586e75;
 }
 
-pre > code {
-    color: #839496;
+code {
+    background-color: #073642;
+    color: #cb4b16;
 }
+
+pre > code { color: #839496; }
+
+/* Tables */
+th {
+    background-color: #073642;
+    color: #93a1a1;
+    border-color: #586e75;
+}
+
+td {
+    color: #839496;
+    border-color: #586e75;
+}
+
+tr:nth-child(even) { background-color: #073642; }
+
+/* Blockquotes */
+blockquote {
+    border-left-color: #268bd2;
+    background-color: #073642;
+    color: #657b83;
+}
+
+/* TOC */
+.toc {
+    background-color: #073642;
+    border: 1px solid #586e75;
+}
+
+.toc a { color: #93a1a1; }
+.toc a:hover { color: #268bd2; }
+
+/* Horizontal rule */
+hr { border-top-color: #586e75; }

@@ -1,11 +1,63 @@
-/* Theme: Monokai — Dark code blocks */
+/* Theme: Monokai — Dark with vibrant colors */
 
+/* Headings */
+h1 { color: #f8f8f2; }
+h2 { color: #a6e22e; }
+h3 { color: #66d9ef; }
+h4, h5, h6 { color: #e6db74; }
+h1 { border-bottom-color: #49483e; }
+h2 { border-bottom-color: #49483e; }
+
+/* Body */
+body { background-color: #272822; color: #f8f8f2; }
+p { color: #f8f8f2; }
+
+/* Links */
+a { color: #66d9ef; }
+a:hover { color: #a6e22e; }
+
+/* Code blocks */
 pre {
-    background-color: #272822;
-    color: #f8f8f2;
-    border: none;
+    background-color: #1e1f1c;
+    border: 1px solid #49483e;
 }
 
-pre > code {
-    color: #f8f8f2;
+code {
+    background-color: #3e3d32;
+    color: #e6db74;
 }
+
+pre > code { color: #f8f8f2; }
+
+/* Tables */
+th {
+    background-color: #3e3d32;
+    color: #a6e22e;
+    border-color: #49483e;
+}
+
+td {
+    color: #f8f8f2;
+    border-color: #49483e;
+}
+
+tr:nth-child(even) { background-color: #2e2f2a; }
+
+/* Blockquotes */
+blockquote {
+    border-left-color: #a6e22e;
+    background-color: #2e2f2a;
+    color: #b8b8b2;
+}
+
+/* TOC */
+.toc {
+    background-color: #2e2f2a;
+    border: 1px solid #49483e;
+}
+
+.toc a { color: #f8f8f2; }
+.toc a:hover { color: #a6e22e; }
+
+/* Horizontal rule */
+hr { border-top-color: #49483e; }

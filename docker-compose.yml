@@ -1,0 +1,9 @@
+services:
+  mdpdf:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - MDPDF_ALLOWED_ORIGINS=http://localhost:8000,http://127.0.0.1:8000
+      - MDPDF_MAX_UPLOAD_MB=10
+    restart: unless-stopped

@@ -1,17 +1,62 @@
-/* Theme: GitHub — GitHub-style dark code blocks */
+/* Theme: GitHub — GitHub-inspired styling */
 
+/* Headings */
+h1 { color: #0d1117; }
+h2 { color: #1f2328; }
+h3, h4, h5, h6 { color: #1f2328; }
+h1 { border-bottom-color: #d1d9e0; }
+h2 { border-bottom-color: #d1d9e0; }
+
+/* Body */
+body { color: #1f2328; }
+p { color: #1f2328; }
+
+/* Links */
+a { color: #0969da; }
+a:hover { color: #0550ae; }
+
+/* Code blocks */
 pre {
     background-color: #0d1117;
-    color: #c9d1d9;
     border: 1px solid #30363d;
+    color: #e6edf3;
+}
+
+code {
+    background-color: #eff1f3;
+    color: #0a3069;
 }
 
 pre > code {
-    color: #c9d1d9;
+    color: #e6edf3;
+    background-color: transparent;
 }
 
+/* Tables */
 th {
-    background-color: #161b22;
-    color: #c9d1d9;
-    border-color: #30363d;
+    background-color: #f6f8fa;
+    color: #1f2328;
+    border-color: #d1d9e0;
 }
+
+td { border-color: #d1d9e0; }
+tr:nth-child(even) { background-color: #f6f8fa; }
+
+/* Blockquotes */
+blockquote {
+    border-left-color: #d1d9e0;
+    background-color: #f6f8fa;
+    color: #59636e;
+}
+
+/* TOC */
+.toc {
+    background-color: #f6f8fa;
+    border: 1px solid #d1d9e0;
+}
+
+.toc a { color: #1f2328; }
+.toc a:hover { color: #0969da; }
+
+/* Horizontal rule */
+hr { border-top-color: #d1d9e0; }

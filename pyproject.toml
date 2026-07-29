@@ -1,6 +1,6 @@
 [project]
 name = "mdpdf"
-version = "0.1.0a1"
+version = "0.2.0"
 description = "High-quality Markdown to PDF converter with responsive tables, syntax highlighting, and Mermaid diagram support"
 readme = "README.md"
 license = {text = "MIT"}

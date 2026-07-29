@@ -139,6 +139,11 @@ class TablePreprocessor:
         2. If fits at 7pt font → REDUCE_FONT
         3. If still too wide → LANDSCAPE (with reduced font)
 
+        Uses a weighted estimation that accounts for:
+        - Number of columns (each adds padding/border overhead)
+        - Average content width (proportional font renders narrower than monospace)
+        - Column separator overhead
+
         Args:
             total_chars: Estimated total character width of the table.
             num_cols: Number of columns.
@@ -146,10 +151,18 @@ class TablePreprocessor:
         Returns:
             Appropriate TableStrategy.
         """
-        if total_chars <= PORTRAIT_MAX_CHARS_NORMAL:
+        # Proportional font renders ~0.7x the width of monospace
+        proportional_factor = 0.7
+        effective_chars = total_chars * proportional_factor
+
+        # Add per-column overhead (borders, padding ~4 chars equivalent each)
+        overhead = num_cols * 4
+        estimated_width = effective_chars + overhead
+
+        if estimated_width <= PORTRAIT_MAX_CHARS_NORMAL:
             return TableStrategy.NORMAL
 
-        if total_chars <= PORTRAIT_MAX_CHARS_REDUCED:
+        if estimated_width <= PORTRAIT_MAX_CHARS_REDUCED:
             return TableStrategy.REDUCE_FONT
 
         return TableStrategy.LANDSCAPE
