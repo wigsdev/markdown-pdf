@@ -87,12 +87,14 @@ class MermaidPreprocessor:
                 input_file.write_text(source_code, encoding="utf-8")
 
                 # Run mmdc
+                puppeteer_config = Path(__file__).parent / "puppeteer-config.json"
                 cmd = [
                     MMDC_COMMAND,
                     "-i", str(input_file),
                     "-o", str(output_file),
                     "-t", "neutral",
                     "--backgroundColor", "transparent",
+                    "-p", str(puppeteer_config),
                 ]
 
                 process = subprocess.run(
