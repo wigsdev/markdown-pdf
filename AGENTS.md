@@ -55,6 +55,38 @@ Constitution → Spec → Plan → Tasks → Implement → Tests → Commit → 
 - Never use `git add .` blindly
 - Group parallel tasks `[P]` into a single commit when they share the same concern
 
+## Semantic Versioning
+
+Este proyecto usa **MAJOR.MINOR.PATCH** siguiendo [semver.org](https://semver.org):
+
+```
+MAJOR.MINOR.PATCH  (e.g., 1.2.3)
+```
+
+### Cuando incrementar cada numero
+
+| Componente | Incrementar cuando... | Ejemplos |
+|------------|----------------------|----------|
+| **MAJOR** | Hay breaking changes que rompen compatibilidad con la API, CLI, o configuracion existente | Renombrar comando CLI, cambiar formato de config, eliminar endpoint API, cambiar estructura de output |
+| **MINOR** | Se agrega funcionalidad nueva sin romper lo existente | Nuevo comando CLI, nuevo tema, nuevo endpoint, nueva opcion de config, rediseno UI |
+| **PATCH** | Se corrigen bugs o se hacen mejoras internas sin cambio funcional | Fix de rendering, fix de CSS, correccion de typos, optimizacion de performance |
+
+### Reglas
+
+1. **Pre-1.0.0** (actual): la API no es estable. MINOR puede incluir breaking changes.
+2. **Post-1.0.0**: MAJOR es obligatorio para cualquier breaking change.
+3. **Suffixes permitidos**: `-alpha`, `-beta`, `-rc.1` para versiones pre-release.
+4. **Bump de version**: se hace en el commit final de cada fase/release, nunca a mitad de fase.
+5. **Archivos a actualizar**: `pyproject.toml` (version), `src/mdpdf/__init__.py` (__version__), `CHANGELOG.md`.
+
+### Criterios para este proyecto
+
+- **Fase con solo fixes** → PATCH (e.g., 0.2.0 → 0.2.1)
+- **Fase con features nuevas** → MINOR (e.g., 0.2.0 → 0.3.0)
+- **Cambio de CLI interface o config format** → MAJOR (e.g., 0.9.0 → 1.0.0)
+- **Rediseno UI sin cambio de API** → MINOR (es feature nueva para el usuario)
+- **Docker/deploy sin cambio funcional** → PATCH
+
 ## Code Standards
 
 ### Python
