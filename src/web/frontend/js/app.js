@@ -149,10 +149,20 @@ async function convertFiles() {
 // UI States
 // ============================================================
 
-function showProgress() {
+function hideAllRightPanel() {
     emptyState.hidden = true;
+    progressSection.hidden = true;
     resultsSection.hidden = true;
     previewSection.hidden = true;
+}
+
+function showEmpty() {
+    hideAllRightPanel();
+    emptyState.hidden = false;
+}
+
+function showProgress() {
+    hideAllRightPanel();
     progressSection.hidden = false;
     progressBar.style.width = "0%";
     convertBtn.disabled = true;
@@ -164,7 +174,7 @@ function updateProgress(percent, text) {
 }
 
 function showResults() {
-    progressSection.hidden = true;
+    hideAllRightPanel();
     resultsSection.hidden = false;
     convertBtn.disabled = false;
 
@@ -213,10 +223,9 @@ function renderResults() {
 function clearResults() {
     results.forEach(r => { if (r.url) URL.revokeObjectURL(r.url); });
     results = [];
-    resultsSection.hidden = true;
-    previewSection.hidden = true;
+    resultsList.innerHTML = "";
     pdfPreview.src = "";
-    emptyState.hidden = false;
+    showEmpty();
 }
 
 // ============================================================
