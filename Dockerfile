@@ -13,6 +13,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libffi-dev \
     fonts-liberation \
     fonts-dejavu-core \
+    fonts-noto-core \
+    fontconfig \
     # Puppeteer/Chromium (required by mermaid-cli)
     libnss3 \
     libnspr4 \
@@ -36,6 +38,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y --no-install-recommends nodejs \
     && rm -rf /var/lib/apt/lists/*
+
+# Rebuild font cache
+RUN fc-cache -f -v
 
 # Install Mermaid CLI (downloads Chromium headless automatically)
 RUN npm install -g @mermaid-js/mermaid-cli
