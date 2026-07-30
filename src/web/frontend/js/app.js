@@ -264,9 +264,6 @@ function openPreview(index) {
             <div class="modal-header">
                 <span class="modal-title">${r.name}</span>
                 <div class="modal-actions">
-                    <a class="btn-download" href="${r.url}" download="${r.name}">
-                        <i data-lucide="download"></i> Download
-                    </a>
                     <button class="btn-icon modal-close" title="Close">
                         <i data-lucide="x"></i>
                     </button>
