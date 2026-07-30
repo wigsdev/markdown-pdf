@@ -401,18 +401,19 @@ select:focus { outline: none; border-color: var(--accent); }
 .progress-bar-container {
     width: 100%;
     max-width: 300px;
-    height: 4px;
+    height: 6px;
     background: var(--border);
-    border-radius: 2px;
+    border-radius: 3px;
     overflow: hidden;
 }
 
 .progress-bar {
     height: 100%;
-    background: var(--accent);
-    border-radius: 2px;
+    background: linear-gradient(90deg, var(--accent), #8b5cf6);
+    border-radius: 3px;
     width: 0%;
     transition: width 0.3s ease;
+    box-shadow: 0 0 8px var(--accent-glow);
 }
 
 .progress-text {
@@ -549,3 +550,122 @@ select:focus { outline: none; border-color: var(--accent); }
 
     .topbar-right { display: none; }
 }
+
+/* ============================================================
+   Modal Preview
+   ============================================================ */
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.2s ease;
+}
+
+.modal {
+    width: 90vw;
+    height: 85vh;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: scaleIn 0.2s ease;
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+}
+
+.modal-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.modal-body {
+    flex: 1;
+    overflow: hidden;
+}
+
+.modal-body iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: white;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* Result item actions */
+.result-item .result-actions {
+    display: flex;
+    gap: 0.4rem;
+    align-items: center;
+}
+
+.result-item .btn-preview {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.3rem 0.6rem;
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 0.7rem;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all var(--transition);
+}
+
+.result-item .btn-preview:hover {
+    color: var(--text);
+    border-color: var(--border-hover);
+    background: var(--surface-hover);
+}
+
+.result-item .btn-preview svg { width: 12px; height: 12px; }
+
+.result-item .btn-remove-result {
+    display: flex;
+    padding: 0.3rem;
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all var(--transition);
+}
+
+.result-item .btn-remove-result:hover {
+    color: var(--error);
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.result-item .btn-remove-result svg { width: 12px; height: 12px; }

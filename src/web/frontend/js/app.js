@@ -185,18 +185,11 @@ function showResults() {
     resultsInfo.textContent = info;
 
     renderResults();
-
-    // Show preview of first successful result
-    const first = results.find(r => r.success);
-    if (first) {
-        previewSection.hidden = false;
-        pdfPreview.src = first.url;
-    }
 }
 
 function renderResults() {
     resultsList.innerHTML = "";
-    results.forEach(r => {
+    results.forEach((r, i) => {
         const item = document.createElement("div");
         item.className = "result-item";
         if (r.success) {
@@ -204,20 +197,98 @@ function renderResults() {
                 <i data-lucide="check-circle" style="width:16px;height:16px;color:var(--success)"></i>
                 <span class="result-name">${r.name}</span>
                 <span class="result-size">${formatSize(r.size)}</span>
-                <a class="btn-download" href="${r.url}" download="${r.name}">
-                    <i data-lucide="download"></i> Download
-                </a>
+                <div class="result-actions">
+                    <button class="btn-preview" data-index="${i}" title="Preview">
+                        <i data-lucide="eye"></i> Preview
+                    </button>
+                    <a class="btn-download" href="${r.url}" download="${r.name}">
+                        <i data-lucide="download"></i> Download
+                    </a>
+                    <button class="btn-remove-result" data-index="${i}" title="Remove">
+                        <i data-lucide="x"></i>
+                    </button>
+                </div>
             `;
         } else {
             item.innerHTML = `
                 <i data-lucide="alert-triangle" style="width:16px;height:16px;color:var(--error)"></i>
                 <span class="result-name">${r.name}</span>
                 <span class="result-size" style="color:var(--error)">${r.error}</span>
+                <div class="result-actions">
+                    <button class="btn-remove-result" data-index="${i}" title="Remove">
+                        <i data-lucide="x"></i>
+                    </button>
+                </div>
             `;
         }
         resultsList.appendChild(item);
     });
     lucide.createIcons();
+
+    // Attach preview handlers
+    resultsList.querySelectorAll(".btn-preview").forEach(btn => {
+        btn.addEventListener("click", () => openPreview(parseInt(btn.dataset.index)));
+    });
+
+    // Attach individual remove handlers
+    resultsList.querySelectorAll(".btn-remove-result").forEach(btn => {
+        btn.addEventListener("click", () => removeResult(parseInt(btn.dataset.index)));
+    });
+}
+
+function removeResult(index) {
+    if (results[index] && results[index].url) {
+        URL.revokeObjectURL(results[index].url);
+    }
+    results.splice(index, 1);
+    if (results.length === 0) {
+        clearResults();
+    } else {
+        const successes = results.filter(r => r.success).length;
+        const failures = results.length - successes;
+        let info = `${successes} file${successes !== 1 ? "s" : ""} converted`;
+        if (failures > 0) info += `, ${failures} failed`;
+        resultsInfo.textContent = info;
+        renderResults();
+    }
+}
+
+function openPreview(index) {
+    const r = results[index];
+    if (!r || !r.success) return;
+
+    const overlay = document.createElement("div");
+    overlay.className = "modal-overlay";
+    overlay.innerHTML = `
+        <div class="modal">
+            <div class="modal-header">
+                <span class="modal-title">${r.name}</span>
+                <div class="modal-actions">
+                    <a class="btn-download" href="${r.url}" download="${r.name}">
+                        <i data-lucide="download"></i> Download
+                    </a>
+                    <button class="btn-icon modal-close" title="Close">
+                        <i data-lucide="x"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <iframe src="${r.url}"></iframe>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
+    lucide.createIcons();
+
+    // Close handlers
+    overlay.querySelector(".modal-close").addEventListener("click", () => overlay.remove());
+    overlay.addEventListener("click", (e) => {
+        if (e.target === overlay) overlay.remove();
+    });
+    document.addEventListener("keydown", function escHandler(e) {
+        if (e.key === "Escape") { overlay.remove(); document.removeEventListener("keydown", escHandler); }
+    });
 }
 
 function clearResults() {
