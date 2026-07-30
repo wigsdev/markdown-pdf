@@ -151,7 +151,7 @@ class HTMLRenderer:
         mermaid_results: list[Any],
         mermaid_index: int,
     ) -> str:
-        """Render a Mermaid block as SVG diagram or error box.
+        """Render a Mermaid block as PNG image or error box.
 
         Args:
             source_code: Mermaid diagram source.
@@ -159,24 +159,17 @@ class HTMLRenderer:
             mermaid_index: Current index into mermaid_results.
 
         Returns:
-            HTML div with SVG image or error display.
+            HTML div with PNG image or error display.
         """
-        from mdpdf.preprocessor.mermaid import svg_to_data_uri
-
-        # Consume the next mermaid result
-        # We need to track index via mutable container since nonlocal
-        # won't work across the closure boundary reliably
         if mermaid_index < len(mermaid_results):
             result = mermaid_results[mermaid_index]
-            # Increment the counter in the parent scope
-            # (handled by the caller tracking the index)
         else:
-            # No result available — render as code
             escaped = html_module.escape(source_code)
             return f'<pre><code class="language-mermaid">{escaped}</code></pre>'
 
         if result.success and result.svg_content:
-            data_uri = svg_to_data_uri(result.svg_content)
+            # svg_content field holds base64-encoded PNG data
+            data_uri = f"data:image/png;base64,{result.svg_content}"
             return (
                 '<div class="mermaid-diagram">'
                 f'<img src="{data_uri}" alt="Mermaid diagram">'

@@ -82,18 +82,18 @@ class MermaidPreprocessor:
             with tempfile.TemporaryDirectory() as temp_dir:
                 temp_path = Path(temp_dir)
                 input_file = temp_path / "diagram.mmd"
-                output_file = temp_path / "diagram.svg"
+                output_file = temp_path / "diagram.png"
 
                 input_file.write_text(source_code, encoding="utf-8")
 
-                # Run mmdc
+                # Run mmdc — output as PNG for reliable text rendering in PDF
                 puppeteer_config = Path(__file__).parent / "puppeteer-config.json"
                 cmd = [
                     MMDC_COMMAND,
                     "-i", str(input_file),
                     "-o", str(output_file),
                     "-t", "neutral",
-                    "--backgroundColor", "transparent",
+                    "--backgroundColor", "white",
                     "-p", str(puppeteer_config),
                 ]
 
@@ -116,14 +116,15 @@ class MermaidPreprocessor:
                 if not output_file.exists():
                     return MermaidResult(
                         success=False,
-                        error_message="SVG output file was not created",
+                        error_message="Output file was not created",
                         source_code=source_code,
                     )
 
-                svg_content = output_file.read_text(encoding="utf-8")
+                png_content = output_file.read_bytes()
+                png_b64 = base64.b64encode(png_content).decode("ascii")
                 return MermaidResult(
                     success=True,
-                    svg_content=svg_content,
+                    svg_content=png_b64,  # reusing field for base64 image data
                     source_code=source_code,
                 )
 
