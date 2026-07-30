@@ -9,6 +9,24 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ## [Unreleased]
 
+### Fixed
+
+- **Mermaid no-sandbox**: Chromium en Docker requiere `--no-sandbox`. Agregado
+  puppeteer-config.json con args de sandbox desactivado.
+- **Mermaid texto invisible**: SVG con foreignObject no renderizaba texto en WeasyPrint.
+  Cambiado a output PNG (Chromium rasteriza el texto directamente).
+- **Fuentes en Docker**: agregado fonts-noto-core + fontconfig para texto completo en diagramas.
+- **Boton X (remove file)**: agregado stopPropagation para evitar que el click
+  burbujee al dropzone y abra el file selector.
+
+### Planned (v0.3.0 — UI Redesign)
+
+- Rediseno completo del frontend: dark mode, iconos SVG, multi-file upload
+- Layout single-screen (sin scroll)
+- Preview del PDF generado
+- Progress bar animada
+- Archivos individuales con boton de cierre
+
 ---
 
 ## [0.2.0] - 2026-07-29

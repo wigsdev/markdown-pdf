@@ -272,3 +272,49 @@ Once US1 (basic conversion) is complete:
 - [x] T078 Bump version a 0.2.0 en pyproject.toml y __init__.py, actualizar CHANGELOG.md
 
 **Checkpoint**: App desplegable en produccion. `docker build && docker run` funciona end-to-end. Version v0.2.0 released.
+
+---
+
+## Phase 13: Frontend Redesign (v0.3.0)
+
+**Purpose**: Rediseno completo de la interfaz web. Dark mode, multi-file, single-screen, iconos SVG, UX moderna.
+
+**Design principles**:
+- Todo en una sola pantalla (viewport height, sin scroll)
+- Dark mode por defecto (estilo Linear/Vercel)
+- Multi-file upload con lista de archivos individuales cerrables
+- Progress bar animada durante conversion
+- PDF preview embebido post-conversion
+- Iconos SVG (Lucide Icons via CDN)
+- Micro-animaciones y transiciones suaves
+
+### Layout & Structure
+
+- [ ] T079 Redisenar `index.html`: layout en viewport height (100vh), grid de 2 zonas (left: upload+options, right: output/preview), header minimal en top bar
+- [ ] T080 Implementar sistema de dark mode en CSS: variables dark-first, colores (#0a0a0b bg, #141415 surface, #2a2a2d borders, #3b82f6 accent), transiciones de color
+
+### Multi-file Upload
+
+- [ ] T081 Refactorizar JS para soportar multiples archivos: array de files, cada uno con estado independiente (pending, converting, done, error)
+- [ ] T082 Implementar lista de archivos con chip/badge individual: nombre, tamano, boton X para eliminar, indicador de estado
+- [ ] T083 Actualizar dropzone para aceptar multiples archivos (multiple attribute + acumulacion en lista)
+
+### Icons & Visual Identity
+
+- [ ] T084 Integrar Lucide Icons via CDN. Reemplazar emojis por SVG icons: upload-cloud, file-text, x, check-circle, alert-triangle, download, settings
+- [ ] T085 Crear identidad visual del header: logo SVG minimalista (o lettering con gradient), version badge
+
+### Conversion Flow
+
+- [ ] T086 Implementar progress bar animada (no spinner): barra horizontal con porcentaje estimado, estados de color (blue=processing, green=done, red=error)
+- [ ] T087 Implementar conversion de multiples archivos: enviar cada archivo al API secuencialmente, actualizar estado individual en la lista
+- [ ] T088 Implementar PDF preview post-conversion: embed `<iframe>` con blob URL del PDF generado, toggle para mostrar/ocultar
+
+### Polish
+
+- [ ] T089 Micro-animaciones: entrada de archivos en lista (fade+slide), hover states (scale 1.02), transiciones de secciones (opacity)
+- [ ] T090 Responsive: en mobile colapsar a single-column, dropzone mas compacto, lista de archivos scrollable
+- [ ] T091 Footer dinamico: leer version desde /api/health, mostrar status del servidor
+- [ ] T092 Actualizar backend /api/convert para soportar batch (multiples archivos en un request) o documentar que el frontend hace requests secuenciales
+
+**Checkpoint**: Frontend moderno, dark mode, multi-file, single-screen. v0.3.0 ready.
