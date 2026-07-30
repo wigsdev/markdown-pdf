@@ -9,23 +9,36 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ## [Unreleased]
 
+---
+
+## [0.3.0] - 2026-07-29
+
+Rediseno completo del frontend. Dark mode, multi-file, single-screen.
+
+### Added
+
+- **Dark mode UI**: estetica Linear/Vercel con fondo oscuro, acento azul/violeta gradient
+- **Multi-file upload**: subir multiples archivos .md, lista con chips individuales cerrables
+- **PDF preview modal**: click en "Preview" abre visor PDF a pantalla completa (iframe)
+  con cierre via X, Escape o click fuera
+- **Progress bar animada**: barra horizontal con gradient y glow durante conversion
+- **Lucide Icons**: iconos SVG profesionales via CDN (reemplazan emojis)
+- **Logo gradient**: lettering MDPDF con gradient azul→violeta
+- **Version badge dinamico**: lee version desde /api/health automaticamente
+- **Eliminacion individual de resultados**: cada archivo convertido tiene boton X
+
+### Changed
+
+- **Layout single-screen**: viewport 100vh sin scroll, grid 2 columnas (upload | output)
+- **Opciones en top bar**: theme, TOC y level integrados en el header (no en seccion separada)
+- **Dropzone con glow**: efecto luminoso azul al hover/drag
+- **Responsive**: mobile colapsa a single-column
+
 ### Fixed
 
-- **Mermaid no-sandbox**: Chromium en Docker requiere `--no-sandbox`. Agregado
-  puppeteer-config.json con args de sandbox desactivado.
-- **Mermaid texto invisible**: SVG con foreignObject no renderizaba texto en WeasyPrint.
-  Cambiado a output PNG (Chromium rasteriza el texto directamente).
-- **Fuentes en Docker**: agregado fonts-noto-core + fontconfig para texto completo en diagramas.
-- **Boton X (remove file)**: agregado stopPropagation para evitar que el click
-  burbujee al dropzone y abra el file selector.
-
-### Planned (v0.3.0 — UI Redesign)
-
-- Rediseno completo del frontend: dark mode, iconos SVG, multi-file upload
-- Layout single-screen (sin scroll)
-- Preview del PDF generado
-- Progress bar animada
-- Archivos individuales con boton de cierre
+- **Estados superpuestos**: CSS `[hidden] { display: none !important }` resuelve conflicto
+  con display:flex que sobreescribia el atributo hidden
+- **Boton X duplicado en modal**: eliminado el download redundante del header del preview
 
 ---
 
