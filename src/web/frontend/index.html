@@ -1,113 +1,115 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MDPDF - Markdown to PDF</title>
+    <title>MDPDF</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="/static/css/styles.css">
 </head>
 <body>
-    <div class="app-container">
-        <header class="header">
-            <div class="logo">
-                <h1>MDPDF</h1>
+    <div class="app">
+        <!-- Top Bar -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <h1 class="logo">MDPDF</h1>
+                <span class="version-badge" id="versionBadge">v0.2.0</span>
             </div>
-            <p class="tagline">Markdown to PDF with professional quality</p>
+            <div class="topbar-right">
+                <div class="option-inline">
+                    <label for="styleSelect">Theme</label>
+                    <select id="styleSelect">
+                        <option value="default">Default</option>
+                        <option value="monokai">Monokai</option>
+                        <option value="github">GitHub</option>
+                        <option value="solarized-dark">Solarized Dark</option>
+                        <option value="solarized-light">Solarized Light</option>
+                    </select>
+                </div>
+                <div class="option-inline">
+                    <label for="tocToggle">TOC</label>
+                    <label class="toggle">
+                        <input type="checkbox" id="tocToggle" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="option-inline">
+                    <label for="tocLevel">Level</label>
+                    <select id="tocLevel">
+                        <option value="2">H2</option>
+                        <option value="3" selected>H3</option>
+                        <option value="4">H4</option>
+                    </select>
+                </div>
+            </div>
         </header>
 
-        <main class="main-content">
-            <!-- Upload Section -->
-            <section class="upload-section">
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Left Panel: Upload + Files -->
+            <section class="panel panel-left">
                 <div class="dropzone" id="dropzone">
-                    <div class="dropzone-content">
-                        <div class="dropzone-icon">&#128196;</div>
-                        <h2>Drop your Markdown file here</h2>
-                        <p>or click to select</p>
-                        <input type="file" id="fileInput" accept=".md,.markdown,.mdown,.mkd" hidden>
-                        <button class="btn btn-secondary" id="selectFileBtn">Select file</button>
+                    <div class="dropzone-content" id="dropzoneContent">
+                        <i data-lucide="upload-cloud" class="dropzone-icon"></i>
+                        <p class="dropzone-text">Drop files here or <button class="link-btn" id="selectFileBtn">browse</button></p>
+                        <span class="dropzone-hint">.md, .markdown, .mdown</span>
+                        <input type="file" id="fileInput" accept=".md,.markdown,.mdown,.mkd,.mkdn" multiple hidden>
                     </div>
-                    <div class="dropzone-active">
-                        <div class="dropzone-icon">&#128229;</div>
-                        <h2>Drop it here</h2>
+                    <div class="dropzone-active" id="dropzoneActive">
+                        <i data-lucide="download" class="dropzone-icon pulse"></i>
+                        <p>Release to upload</p>
                     </div>
                 </div>
 
-                <div class="file-info" id="fileInfo" hidden>
-                    <div class="file-details">
-                        <span class="file-name" id="fileName">document.md</span>
-                        <span class="file-size" id="fileSize">0 KB</span>
-                    </div>
-                    <button class="btn-icon" id="removeFileBtn" title="Remove file">&times;</button>
-                </div>
-            </section>
+                <!-- File List -->
+                <div class="file-list" id="fileList"></div>
 
-            <!-- Options Section -->
-            <section class="options-section">
-                <h3>Options</h3>
-                <div class="options-grid">
-                    <div class="option-group">
-                        <label for="styleSelect">Theme</label>
-                        <select id="styleSelect">
-                            <option value="default">Default</option>
-                            <option value="monokai">Monokai</option>
-                            <option value="github">GitHub</option>
-                            <option value="solarized-dark">Solarized Dark</option>
-                            <option value="solarized-light">Solarized Light</option>
-                        </select>
-                    </div>
-                    <div class="option-group">
-                        <label for="tocToggle">Table of Contents</label>
-                        <label class="toggle">
-                            <input type="checkbox" id="tocToggle" checked>
-                            <span class="toggle-slider"></span>
-                        </label>
-                    </div>
-                    <div class="option-group">
-                        <label for="tocLevel">TOC Level</label>
-                        <select id="tocLevel">
-                            <option value="2">H1 - H2</option>
-                            <option value="3" selected>H1 - H3</option>
-                            <option value="4">H1 - H4</option>
-                        </select>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Convert Button -->
-            <section class="action-section">
-                <button class="btn btn-primary btn-large" id="convertBtn" disabled>
-                    Convert to PDF
+                <!-- Convert Button -->
+                <button class="btn-convert" id="convertBtn" disabled>
+                    <i data-lucide="zap"></i>
+                    <span>Convert</span>
                 </button>
             </section>
 
-            <!-- Status -->
-            <section class="status-section" id="statusSection" hidden>
-                <div class="spinner"></div>
-                <p id="statusText">Converting...</p>
-            </section>
+            <!-- Right Panel: Output -->
+            <section class="panel panel-right">
+                <!-- Empty State -->
+                <div class="empty-state" id="emptyState">
+                    <i data-lucide="file-output" class="empty-icon"></i>
+                    <p>PDF output will appear here</p>
+                </div>
 
-            <!-- Success -->
-            <section class="success-section" id="successSection" hidden>
-                <h3>Conversion successful</h3>
-                <p id="successInfo"></p>
-                <a class="btn btn-primary" id="downloadBtn" href="#" download>Download PDF</a>
-                <button class="btn btn-secondary" id="convertAnotherBtn">Convert another</button>
-            </section>
+                <!-- Progress -->
+                <div class="progress-section" id="progressSection" hidden>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="progressBar"></div>
+                    </div>
+                    <p class="progress-text" id="progressText">Converting...</p>
+                </div>
 
-            <!-- Error -->
-            <section class="error-section" id="errorSection" hidden>
-                <h3>Conversion error</h3>
-                <p id="errorMessage"></p>
-                <button class="btn btn-secondary" id="retryBtn">Try again</button>
+                <!-- Results -->
+                <div class="results-section" id="resultsSection" hidden>
+                    <div class="results-header">
+                        <div class="results-status">
+                            <i data-lucide="check-circle" class="icon-success"></i>
+                            <span id="resultsInfo">1 file converted</span>
+                        </div>
+                        <button class="btn-icon" id="clearResultsBtn" title="Clear">
+                            <i data-lucide="x"></i>
+                        </button>
+                    </div>
+                    <div class="results-list" id="resultsList"></div>
+                </div>
+
+                <!-- PDF Preview -->
+                <div class="preview-section" id="previewSection" hidden>
+                    <iframe id="pdfPreview" class="pdf-preview"></iframe>
+                </div>
             </section>
         </main>
-
-        <footer class="footer">
-            <p>MDPDF v0.1.0 | MIT License</p>
-        </footer>
     </div>
 
     <script src="/static/js/app.js"></script>
