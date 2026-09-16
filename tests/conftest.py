@@ -40,6 +40,13 @@ def mermaid_md(fixtures_dir: Path) -> Path:
 
 
 @pytest.fixture
+def math_md(fixtures_dir: Path) -> Path:
+    """Return path to math_formulas.md fixture."""
+    return fixtures_dir / "math_formulas.md"
+
+
+
+@pytest.fixture
 def tmp_output(tmp_path: Path) -> Path:
     """Return a temporary output directory."""
     output = tmp_path / "output"

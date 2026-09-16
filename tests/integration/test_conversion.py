@@ -79,3 +79,11 @@ class TestEndToEndConversion:
         results = self.converter.convert_batch(files, output_dir=tmp_output)
         assert len(results) == 2
         assert all(r.success for r in results)
+
+    def test_convert_math_formulas(self, math_md: Path, tmp_output: Path) -> None:
+        output = tmp_output / "math.pdf"
+        result = self.converter.convert(math_md, output)
+        assert result.success is True
+        assert output.exists()
+        assert output.stat().st_size > 0
+
