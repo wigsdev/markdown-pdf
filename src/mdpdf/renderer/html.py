@@ -14,6 +14,7 @@ from mdpdf.models import (
     TableStrategy,
 )
 from mdpdf.renderer.highlight import SyntaxHighlighter
+from mdpdf.renderer.math import MathRenderer, normalize_latex
 
 logger = logging.getLogger(__name__)
 
@@ -34,39 +35,43 @@ class HTMLRenderer:
         """
         self._config = style_config
         self._highlighter = SyntaxHighlighter(style_config.theme)
+        self._math_renderer = MathRenderer()
 
     def render(self, document: ProcessedDocument, css: str) -> HTMLDocument:
         """Render processed document to full HTML5 document.
 
         Args:
-            document: ProcessedDocument with all preprocessing applied.
-            css: Full CSS string to embed.
+            document: Processed document from pipeline.
+            css: Complete CSS stylesheet to embed.
 
         Returns:
-            HTMLDocument ready for PDF generation.
+            HTMLDocument with full HTML and metadata.
         """
-        body_html = self._render_tokens(document)
-
-        # Generate TOC if enabled
         toc_html = ""
         if self._config.toc and document.headings:
             toc_html = self._generate_toc(
                 document.headings, self._config.toc_level
             )
 
-        # Get syntax highlighting CSS
+        body_html = self._render_tokens(document)
+
+        title = self._extract_title(document.headings)
+        base_url = (
+            str(document.source_path.parent) if document.source_path else None
+        )
+
         highlight_css = self._highlighter.get_css()
         full_css = f"{css}\n\n/* Syntax Highlighting */\n{highlight_css}"
 
-        title = self._extract_title(document.headings)
-        html = self._build_html(title, full_css, toc_html, body_html)
-
-        base_url = None
-        if document.source_path:
-            base_url = str(document.source_path.parent.resolve())
+        full_html = self._build_html(
+            title=title,
+            css=full_css,
+            toc_html=toc_html,
+            body_html=body_html,
+        )
 
         return HTMLDocument(
-            html=html,
+            html=full_html,
             css=full_css,
             title=title,
             base_url=base_url,
@@ -86,23 +91,47 @@ class HTMLRenderer:
             HTML body content string.
         """
         from markdown_it import MarkdownIt
-        from markdown_it.renderer import RendererHTML
         from mdit_py_plugins.anchors import anchors_plugin
+        from mdit_py_plugins.dollarmath import dollarmath_plugin
 
         # Build a custom renderer that handles fence tokens inline
         md = MarkdownIt("gfm-like", {"typographer": False})
         anchors_plugin(md)
+        dollarmath_plugin(
+            md, allow_space=False, allow_digits=True, double_inline=True
+        )
 
         # Track mermaid result index
         mermaid_idx = [0]  # mutable container for closure access
         mermaid_results = document.mermaid_results or []
 
+        # Batch-extract and render all LaTeX formulas
+        math_items: list[dict[str, Any]] = []
+
+        def scan_math_tokens(token_list: list[Any]) -> None:
+            for t in token_list:
+                t_type = getattr(t, "type", "")
+                if t_type == "fence":
+                    info = t.info.strip().split()[0].lower() if getattr(t, "info", "").strip() else ""
+                    if info in ("math", "latex"):
+                        math_items.append({"id": id(t), "latex": t.content, "display": True})
+                elif t_type in ("math_block", "math_inline_double"):
+                    math_items.append({"id": id(t), "latex": t.content, "display": True})
+                elif t_type == "math_inline":
+                    math_items.append({"id": id(t), "latex": t.content, "display": False})
+
+                if getattr(t, "children", None):
+                    scan_math_tokens(t.children)
+
+        scan_math_tokens(document.tokens)
+        rendered_math_map = self._math_renderer.batch_render(math_items)
+
         # Override the fence renderer
         def custom_fence_renderer(
             tokens: list[Any],
             idx: int,
-            options: dict[str, Any],
-            env: dict[str, Any],
+            _options: dict[str, Any],
+            _env: dict[str, Any],
         ) -> str:
             token = tokens[idx]
             info = token.info.strip().split()[0] if token.info.strip() else ""
@@ -116,12 +145,46 @@ class HTMLRenderer:
                 mermaid_idx[0] += 1
                 return result_html
 
+            # Math blocks via code fence (```math or ```latex)
+            if info.lower() in ("math", "latex"):
+                rendered = rendered_math_map.get(id(token))
+                if rendered:
+                    return f'<div class="math-block">{rendered}</div>'
+                return self._render_math_block(content)
+
             # Regular code blocks → Pygments highlighting
             lang = info if info else None
             return self._render_code_block(content, lang)
 
-        # Monkey-patch the fence rule
+        def custom_math_inline_renderer(
+            tokens: list[Any],
+            idx: int,
+            _options: dict[str, Any],
+            _env: dict[str, Any],
+        ) -> str:
+            token = tokens[idx]
+            rendered = rendered_math_map.get(id(token))
+            if rendered:
+                return f'<span class="math-inline">{rendered}</span>'
+            return self._render_math_inline(token.content)
+
+        def custom_math_block_renderer(
+            tokens: list[Any],
+            idx: int,
+            _options: dict[str, Any],
+            _env: dict[str, Any],
+        ) -> str:
+            token = tokens[idx]
+            rendered = rendered_math_map.get(id(token))
+            if rendered:
+                return f'<div class="math-block">{rendered}</div>'
+            return self._render_math_block(token.content)
+
+        # Monkey-patch rules
         md.renderer.rules["fence"] = custom_fence_renderer  # type: ignore[assignment]
+        md.renderer.rules["math_inline"] = custom_math_inline_renderer  # type: ignore[assignment]
+        md.renderer.rules["math_inline_double"] = custom_math_block_renderer  # type: ignore[assignment]
+        md.renderer.rules["math_block"] = custom_math_block_renderer  # type: ignore[assignment]
 
         # Render all tokens
         env: dict[str, Any] = {}
@@ -132,6 +195,47 @@ class HTMLRenderer:
             html = self._apply_table_strategies(html, document)
 
         return html
+
+    def _normalize_latex(self, latex: str) -> str:
+        """Preprocess and sanitize LaTeX expressions.
+
+        Args:
+            latex: Raw LaTeX string.
+
+        Returns:
+            Cleaned and normalized LaTeX string.
+        """
+        return normalize_latex(latex)
+
+    def _render_math_inline(self, latex_content: str) -> str:
+        """Render inline LaTeX math to SVG or MathML fallback.
+
+        Args:
+            latex_content: Raw LaTeX string (without enclosing $).
+
+        Returns:
+            HTML span with SVG or MathML.
+        """
+        content = latex_content.strip()
+        if not content:
+            return ""
+        results = self._math_renderer.batch_render([{"id": 1, "latex": content, "display": False}])
+        return f'<span class="math-inline">{results.get(1, content)}</span>'
+
+    def _render_math_block(self, latex_content: str) -> str:
+        """Render block LaTeX math to SVG or MathML fallback.
+
+        Args:
+            latex_content: Raw LaTeX string (without enclosing $$).
+
+        Returns:
+            HTML div with SVG or MathML.
+        """
+        content = latex_content.strip()
+        if not content:
+            return ""
+        results = self._math_renderer.batch_render([{"id": 1, "latex": content, "display": True}])
+        return f'<div class="math-block">{results.get(1, content)}</div>'
 
     def _render_code_block(self, code: str, language: str | None) -> str:
         """Render a fenced code block with Pygments highlighting.
