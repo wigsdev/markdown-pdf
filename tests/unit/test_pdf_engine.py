@@ -95,3 +95,12 @@ class TestStyles:
         custom.write_text("h1 { color: red; }", encoding="utf-8")
         css = get_full_css("default", custom_css=custom)
         assert "color: red" in css
+
+    def test_get_katex_css(self) -> None:
+        from mdpdf.pdf.styles import get_katex_css
+        katex_css = get_katex_css()
+        assert "KaTeX_Main" in katex_css
+        assert "@font-face" in katex_css
+        css = get_full_css("default")
+        assert "KaTeX Math Styles" in css
+

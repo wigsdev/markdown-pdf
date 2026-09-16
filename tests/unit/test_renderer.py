@@ -3,7 +3,12 @@
 from __future__ import annotations
 
 from mdpdf.config import StyleConfig
-from mdpdf.models import HeadingInfo, HTMLDocument, ProcessedDocument, TableAnalysis, TableStrategy
+from mdpdf.models import (
+    HTMLDocument,
+    ProcessedDocument,
+    TableAnalysis,
+    TableStrategy,
+)
 from mdpdf.renderer.highlight import SyntaxHighlighter
 from mdpdf.renderer.html import HTMLRenderer
 
@@ -93,3 +98,37 @@ class TestHTMLRenderer:
         ]
         result = self.renderer.render(doc, css="")
         assert "table-reduce-font" in result.html
+
+    def test_render_math_inline(self) -> None:
+        doc = self._make_document("Equation $E = mc^2$ is classic.\n")
+        result = self.renderer.render(doc, css="")
+        assert '<span class="math-inline">' in result.html
+        assert "katex" in result.html or "<math" in result.html or "<svg" in result.html
+
+    def test_render_math_block(self) -> None:
+        doc = self._make_document("$$\n\\frac{a}{b} = c\n$$\n")
+        result = self.renderer.render(doc, css="")
+        assert '<div class="math-block">' in result.html
+        assert "katex" in result.html or "<math" in result.html or "<svg" in result.html
+
+    def test_render_math_fence_block(self) -> None:
+        doc = self._make_document("```math\n\\alpha + \\beta = \\gamma\n```\n")
+        result = self.renderer.render(doc, css="")
+        assert '<div class="math-block">' in result.html
+        assert "katex" in result.html or "<math" in result.html or "<svg" in result.html
+
+    def test_render_math_malformed_fallback(self) -> None:
+        doc = self._make_document("$$\n\\invalidmacroxyz{{{}}\n$$\n")
+        result = self.renderer.render(doc, css="")
+        # Should fallback gracefully without crashing
+        assert "katex" in result.html or "math-fallback" in result.html or "<math" in result.html or "<svg" in result.html or "math-error" in result.html
+
+    def test_render_math_double_inline_in_list(self) -> None:
+        doc = self._make_document("1. **Title:**\n   $$A \\cap B = \\langle 7, 12 \\rangle$$\n")
+        result = self.renderer.render(doc, css="")
+        assert '<div class="math-block">' in result.html
+        assert "katex" in result.html or "<math" in result.html or "<svg" in result.html
+
+
+
+
