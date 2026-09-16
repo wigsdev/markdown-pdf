@@ -204,11 +204,262 @@ img { max-width: 100%; height: auto; }
 .toc a { color: #333; }
 
 /* ==========================================================================
+   Math Formulas (LaTeX / MathJax SVG / MathML / KaTeX)
+   ========================================================================== */
+
+.math-inline {
+    display: inline;
+    vertical-align: baseline;
+    font-family: "KaTeX_Math", "Latin Modern Math", "STIX Two Math", "Cambria Math", "DejaVu Serif", serif;
+}
+
+.math-inline svg {
+    display: inline-block;
+    vertical-align: middle;
+    overflow: visible;
+}
+
+.math-inline math {
+    font-size: 1.05em;
+}
+
+.math-block {
+    display: block;
+    text-align: center;
+    margin: 1.2em 0;
+    page-break-inside: avoid;
+    break-inside: avoid;
+    font-family: "KaTeX_Math", "Latin Modern Math", "STIX Two Math", "Cambria Math", "DejaVu Serif", serif;
+}
+
+.math-block svg {
+    display: inline-block;
+    margin: 0 auto;
+    overflow: visible;
+    max-width: 100%;
+}
+
+.math-block math {
+    font-size: 1.18em;
+}
+
+math {
+    display: inline;
+}
+
+/* MathML operator and identifier spacing to avoid tight/glued rendering */
+math mo {
+    padding: 0 0.18em;
+}
+
+math mi {
+    padding: 0 0.02em;
+    font-style: italic;
+}
+
+math mn {
+    padding: 0 0.02em;
+}
+
+math mrow {
+    line-height: 1.35;
+}
+
+/* Fractions using inline-table for horizontal flow and crisp fraction bars */
+mfrac {
+    display: inline-table;
+    vertical-align: middle;
+    margin: 0 0.18em;
+    border-collapse: collapse;
+    text-align: center;
+    line-height: 1;
+    font-size: 0.9em;
+}
+
+mfrac > :first-child {
+    display: table-row;
+    border-bottom: 1.2px solid currentColor;
+    padding-bottom: 1px;
+}
+
+mfrac > :last-child {
+    display: table-row;
+    padding-top: 1px;
+}
+
+/* Superscripts (powers) */
+msup {
+    display: inline;
+    line-height: 1;
+}
+
+msup > :last-child {
+    font-size: 0.7em;
+    vertical-align: 0.55em;
+    line-height: 0;
+    margin-left: 0.05em;
+}
+
+/* Subscripts */
+msub {
+    display: inline;
+    line-height: 1;
+}
+
+msub > :last-child {
+    font-size: 0.7em;
+    vertical-align: -0.35em;
+    line-height: 0;
+    margin-left: 0.05em;
+}
+
+/* Sub-Superscripts */
+msubsup {
+    display: inline;
+    line-height: 1;
+}
+
+msubsup > :nth-child(2) {
+    font-size: 0.7em;
+    vertical-align: -0.35em;
+    line-height: 0;
+}
+
+msubsup > :nth-child(3) {
+    font-size: 0.7em;
+    vertical-align: 0.55em;
+    line-height: 0;
+}
+
+/* Square Roots */
+msqrt {
+    display: inline;
+    vertical-align: middle;
+    border-top: 1.2px solid currentColor;
+    padding-top: 1px;
+    padding-left: 1px;
+    padding-right: 1px;
+    margin-left: 0.1em;
+}
+
+msqrt::before {
+    content: "√";
+    font-size: 1.15em;
+    vertical-align: -0.05em;
+    margin-right: -0.05em;
+}
+
+/* Matrices and tables */
+mtable {
+    display: inline-table;
+    border-collapse: collapse;
+    vertical-align: middle;
+    margin: 0 0.2em;
+}
+
+mtr {
+    display: table-row;
+}
+
+mtd {
+    display: table-cell;
+    padding: 0.2em 0.4em;
+    text-align: center;
+}
+
+/* Clean math fallback styling */
+.math-fallback {
+    font-style: italic;
+    font-family: "KaTeX_Math", "Latin Modern Math", "Cambria Math", serif;
+    letter-spacing: 0.04em;
+    padding: 0 0.15em;
+}
+
+.math-error {
+    color: #e06c75;
+    background-color: rgba(224, 108, 117, 0.1);
+    padding: 2px 4px;
+    border-radius: 4px;
+    border: 1px solid rgba(224, 108, 117, 0.3);
+}
+
+div.math-error {
+    padding: 0.5em;
+    margin: 1em 0;
+}
+
+/* ==========================================================================
    Horizontal Rule
    ========================================================================== */
 
 hr { border: none; border-top: 1px solid #ddd; margin: 2em 0; }
 """
+
+
+def get_katex_css() -> str:
+    """Load bundled KaTeX CSS with absolute local font paths for WeasyPrint.
+
+    Returns:
+        KaTeX CSS string with local font URIs and responsive wrapping rules.
+    """
+    katex_dir = Path(__file__).parent.parent / "resources" / "katex"
+    css_file = katex_dir / "katex.min.css"
+    fonts_dir = katex_dir / "fonts"
+    if not css_file.exists():
+        return ""
+
+    try:
+        content = css_file.read_text(encoding="utf-8")
+        # Replace relative font paths with absolute file:// URIs
+        fonts_uri = fonts_dir.as_uri()
+        content = content.replace("fonts/", f"{fonts_uri}/")
+
+        # Responsive line-wrapping rules for KaTeX math formulas
+        overrides = """
+/* KaTeX responsive and wrapping rules for PDF */
+.katex-display {
+    display: block;
+    margin: 1em 0;
+    text-align: center;
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+
+.katex-display > .katex {
+    display: inline-block;
+    white-space: normal;
+    text-align: center;
+    max-width: 100%;
+}
+
+.katex-display > .katex > .katex-html {
+    display: inline-block;
+    white-space: normal;
+    text-align: center;
+}
+
+.katex .base {
+    display: inline-block;
+    white-space: normal;
+}
+
+.math-inline {
+    display: inline;
+    white-space: normal;
+}
+
+.math-block {
+    display: block;
+    text-align: center;
+    margin: 1.2em 0;
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+"""
+        return f"{content}\n{overrides}"
+    except Exception as e:
+        logger.warning("Failed to load KaTeX CSS: %s", e)
+        return ""
 
 
 def get_theme_css(theme: str) -> str:
@@ -244,7 +495,7 @@ def get_theme_css(theme: str) -> str:
 def get_full_css(
     theme: str = "default", custom_css: Path | None = None
 ) -> str:
-    """Get complete CSS including base styles and theme.
+    """Get complete CSS including base styles, KaTeX, and theme.
 
     Args:
         theme: Theme name.
@@ -254,6 +505,11 @@ def get_full_css(
         Complete CSS string.
     """
     parts = [BASE_CSS]
+
+    # Add KaTeX CSS
+    katex_css = get_katex_css()
+    if katex_css:
+        parts.append(f"\n/* KaTeX Math Styles */\n{katex_css}")
 
     # Add theme-specific CSS
     theme_css = get_theme_css(theme)
