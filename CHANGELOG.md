@@ -11,6 +11,23 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ---
 
+## [0.4.0] - 2026-09-16
+
+Soporte completo de fórmulas matemáticas en LaTeX (inline y bloques) con renderizado tipográfico KaTeX en modo HTML + CSS y fuentes locales empaquetadas.
+
+### Added
+
+- **Motor KaTeX HTML + CSS**: Renderizado de fórmulas LaTeX inline (`$formula$`), bloques (`$$formula$$`) y bloques de código ```` ```math ```` / ```` ```latex ```` a HTML estructurado con tipografía matemática nítida y seleccionable.
+- **Fuentes matemáticas locales offline**: Empaquetado de la distribución oficial de KaTeX (`katex.min.js`, `katex.min.css` y fuentes `.ttf`) en `src/mdpdf/resources/katex/`, garantizando funcionamiento 100% offline.
+- **Auto-quebrado responsivo**: Reglas CSS (`white-space: normal`, `flex-wrap: wrap`) que permiten que expresiones matemáticas complejas y extensas se quiebren en los operadores sin desbordar los márgenes de página del PDF.
+- **Normalización inteligente de sintaxis LaTeX**: Traducción automática de símbolos Unicode de conjuntos y lógica (`∩`, `∪`, `∈`, `∉`, `ℝ`, `ℕ`, `ℤ`, `⇒`, `≤`, `≥`, etc.), primas ($A', C'$) y atajos de intervalos.
+- **Procesamiento en lote (batching)**: Conversión en un solo subproceso de todas las fórmulas de un documento para máxima velocidad.
+- **Fallback robusto**: Fallback automático a MathML o texto sanitizado en caso de expresiones complejas atípicas.
+- **Pruebas unitarias**: Suite de tests en `tests/unit/test_math.py`, `tests/unit/test_renderer.py` y `tests/unit/test_pdf_engine.py`.
+
+
+---
+
 ## [0.3.0] - 2026-07-29
 
 Rediseno completo del frontend. Dark mode, multi-file, single-screen.

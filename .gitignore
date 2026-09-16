@@ -37,3 +37,5 @@ _backup/
 *.pdf
 !tests/fixtures/*.pdf
 semantic-review/
+node_modules/
+

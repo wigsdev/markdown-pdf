@@ -1,7 +1,7 @@
 [project]
 name = "mdpdf"
-version = "0.3.0"
-description = "High-quality Markdown to PDF converter with responsive tables, syntax highlighting, and Mermaid diagram support"
+version = "0.4.0"
+description = "High-quality Markdown to PDF converter with responsive tables, syntax highlighting, LaTeX math formulas, and Mermaid diagram support"
 readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.11"
@@ -33,6 +33,7 @@ dependencies = [
     "typer>=0.12.0",
     "rich>=13.0.0",
     "pyyaml>=6.0",
+    "latex2mathml>=3.77.0",
 ]
 
 [project.optional-dependencies]
@@ -98,7 +99,7 @@ warn_unused_ignores = true
 show_error_codes = true
 
 [[tool.mypy.overrides]]
-module = ["weasyprint.*", "markdown_it.*", "mdit_py_plugins.*"]
+module = ["weasyprint.*", "markdown_it.*", "mdit_py_plugins.*", "latex2mathml.*"]
 ignore_missing_imports = true
 
 # ============================================================

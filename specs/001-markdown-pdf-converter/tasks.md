@@ -318,3 +318,27 @@ Once US1 (basic conversion) is complete:
 - [x] T092 Actualizar backend /api/convert para soportar batch (multiples archivos en un request) o documentar que el frontend hace requests secuenciales
 
 **Checkpoint**: Frontend moderno, dark mode, multi-file, single-screen. v0.3.0 ready.
+
+---
+
+## Phase 14: LaTeX Math Support with KaTeX HTML + CSS (v0.4.0)
+
+**Purpose**: Renderizado de fórmulas matemáticas complejas mediante KaTeX en modo HTML + CSS con fuentes tipográficas locales empaquetadas (KaTeX TTF) y reglas responsivas de auto-wrap, garantizando que ecuaciones largas no se corten en los márgenes de página y mantengan texto vectorial seleccionable.
+
+**Goal**: Soporte completo y fluido de expresiones matemáticas complejas (fracciones anidadas, potencias compuestas, radicales, teoría de conjuntos y operadores lógicos) en documentos como `ejercicios_grupo_24.md`.
+
+### Implementation
+
+- [x] T093 Empaquetar distribución KaTeX (JS, CSS y fuentes TTF locales) en `src/mdpdf/resources/katex/` para funcionamiento 100% offline
+- [x] T094 Implementar script puente Node `src/mdpdf/resources/render_katex.js` para renderizar lotes de fórmulas LaTeX a KaTeX HTML (`katex.renderToString`)
+- [x] T095 Crear motor `MathRenderer` (`src/mdpdf/renderer/math.py`) con sanitización de LaTeX y fallback elegante a MathML
+- [x] T096 Integrar `MathRenderer` en `HTMLRenderer` (`src/mdpdf/renderer/html.py`) con escaneo y procesamiento por lotes en el token stream
+- [x] T097 Inyectar estilos KaTeX y fuentes locales `@font-face` con reglas responsivas (`white-space: normal`, `.katex .base { flex-wrap: wrap }`) en `src/mdpdf/pdf/styles.py`
+- [x] T098 Crear suite de pruebas unitarias (`tests/unit/test_math.py` y `tests/unit/test_renderer.py`) y validar conversión end-to-end de `ejercicios_grupo_24.md`
+- [x] T099 Bump de versión a 0.4.0 en `pyproject.toml` y `src/mdpdf/__init__.py`
+
+**Checkpoint**: Fórmulas matemáticas complejas se renderizan nítidamente en KaTeX HTML + CSS sin desbordamiento de página. Versión v0.4.0 released.
+
+
+
+
