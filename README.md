@@ -7,6 +7,7 @@ syntax highlighting, and Mermaid diagram support.
 
 - **Responsive tables**: auto-adjust columns, reduce font to 7pt, rotate to landscape if needed
 - **Syntax highlighting**: Pygments-powered code blocks with 5 themes
+- **LaTeX Math formulas**: inline ($...$) and block ($$...$$) math rendered via MathML
 - **Mermaid diagrams**: rendered as SVG graphics via Mermaid CLI
 - **Smart page breaks**: tables and code blocks never split between pages
 - **Table of contents**: auto-generated with internal hyperlinks
@@ -24,7 +25,7 @@ syntax highlighting, and Mermaid diagram support.
 ### Install
 
 ```bash
-git clone https://github.com/WIGUSA/markdown-pdf.git
+git clone https://github.com/wigsdev/markdown-pdf.git
 cd markdown-pdf
 python -m venv .venv
 source .venv/bin/activate
