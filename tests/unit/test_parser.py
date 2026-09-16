@@ -69,3 +69,19 @@ class TestMarkdownParser:
         result = self.parser.parse(content)
         assert len(result.headings) == 3
         assert all(h.level == 2 for h in result.headings)
+
+    def test_parse_math_inline(self) -> None:
+        content = "Einstein said $E = mc^2$ was true."
+        result = self.parser.parse(content)
+        # inline token contains children with math_inline
+        inline_tokens = [t for t in result.tokens if t.type == "inline"]
+        assert len(inline_tokens) > 0
+        child_types = [c.type for c in inline_tokens[0].children or []]
+        assert "math_inline" in child_types
+
+    def test_parse_math_block(self) -> None:
+        content = "$$\n\\frac{a}{b} = c\n$$\n"
+        result = self.parser.parse(content)
+        token_types = [t.type for t in result.tokens]
+        assert "math_block" in token_types
+

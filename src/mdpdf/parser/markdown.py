@@ -8,6 +8,7 @@ from typing import Any
 
 from markdown_it import MarkdownIt
 from mdit_py_plugins.anchors import anchors_plugin
+from mdit_py_plugins.dollarmath import dollarmath_plugin
 
 from mdpdf.exceptions import ParserError
 from mdpdf.models import HeadingInfo, ParsedDocument
@@ -17,9 +18,12 @@ class MarkdownParser:
     """Parse Markdown content into a token stream with heading extraction."""
 
     def __init__(self) -> None:
-        """Initialize the parser with GFM-like configuration."""
+        """Initialize the parser with GFM-like configuration and math plugins."""
         self._md = MarkdownIt("gfm-like", {"typographer": False})
         anchors_plugin(self._md)
+        dollarmath_plugin(
+            self._md, allow_space=False, allow_digits=True, double_inline=True
+        )
 
     def parse(self, content: str, source_path: Path | None = None) -> ParsedDocument:
         """Parse Markdown content into tokens.
